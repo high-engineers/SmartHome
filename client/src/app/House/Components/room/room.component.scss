@@ -1,0 +1,10 @@
+.room {
+    margin: 10px;
+}
+
+.room-img {
+    background-image: linear-gradient(to right, rgba(117, 19, 93, 0.73), rgba(161, 175, 255, 0.767)), url('bedroom.jpg');   
+    height: 200px;
+    min-width: 330px;
+    background-size: cover;
+}

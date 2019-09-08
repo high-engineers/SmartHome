@@ -5,12 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RoomPickerComponent } from './House/Components/room-picker/room-picker.component';
 import { DevicePickerComponent } from './House/Components/device-picker/device-picker.component';
+import { RoomComponent } from './House/Components/room/room.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RoomPickerComponent,
-    DevicePickerComponent
+    DevicePickerComponent,
+    RoomComponent
   ],
   imports: [
     BrowserModule,
