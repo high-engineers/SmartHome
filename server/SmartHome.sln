@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartHome.Web", "SmartHome\SmartHome.Web.csproj", "{E4ECE286-9B4A-4CF7-BC2A-7E56F356F9AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartHome.API", "SmartHome.API\SmartHome.API.csproj", "{2FDBE0A3-EB06-4F56-BE42-00C752C491A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHome.BusinessLogic", "SmartHome.BusinessLogic\SmartHome.BusinessLogic.csproj", "{70906435-2B08-4FAE-8C0D-FC921E89A6C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartHome.BusinessLogic", "SmartHome.BusinessLogic\SmartHome.BusinessLogic.csproj", "{D5134704-0F0B-4DD4-92B6-333964565C00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHome.Data", "SmartHome.Data\SmartHome.Data.csproj", "{BCDCE529-1BAC-4666-98FB-F82B0CA6C46B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartHome.Data", "SmartHome.Data\SmartHome.Data.csproj", "{0FB31229-EC41-4D16-A25E-F6E35DF5C3A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E4ECE286-9B4A-4CF7-BC2A-7E56F356F9AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E4ECE286-9B4A-4CF7-BC2A-7E56F356F9AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4ECE286-9B4A-4CF7-BC2A-7E56F356F9AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4ECE286-9B4A-4CF7-BC2A-7E56F356F9AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{70906435-2B08-4FAE-8C0D-FC921E89A6C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70906435-2B08-4FAE-8C0D-FC921E89A6C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70906435-2B08-4FAE-8C0D-FC921E89A6C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70906435-2B08-4FAE-8C0D-FC921E89A6C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCDCE529-1BAC-4666-98FB-F82B0CA6C46B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCDCE529-1BAC-4666-98FB-F82B0CA6C46B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCDCE529-1BAC-4666-98FB-F82B0CA6C46B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCDCE529-1BAC-4666-98FB-F82B0CA6C46B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FDBE0A3-EB06-4F56-BE42-00C752C491A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FDBE0A3-EB06-4F56-BE42-00C752C491A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FDBE0A3-EB06-4F56-BE42-00C752C491A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FDBE0A3-EB06-4F56-BE42-00C752C491A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5134704-0F0B-4DD4-92B6-333964565C00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5134704-0F0B-4DD4-92B6-333964565C00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5134704-0F0B-4DD4-92B6-333964565C00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5134704-0F0B-4DD4-92B6-333964565C00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FB31229-EC41-4D16-A25E-F6E35DF5C3A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FB31229-EC41-4D16-A25E-F6E35DF5C3A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FB31229-EC41-4D16-A25E-F6E35DF5C3A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FB31229-EC41-4D16-A25E-F6E35DF5C3A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
