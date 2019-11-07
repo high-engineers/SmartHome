@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { RoomPickerComponent } from './House/Components/room-picker/room-picker.component';
 import { DevicePickerComponent } from './House/Components/device-picker/device-picker.component';
 import { RoomComponent } from './House/Components/room/room.component';
+import { DeviceComponent } from './House/Components/device/device.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RoomPickerComponent,
     DevicePickerComponent,
-    RoomComponent
+    RoomComponent,
+    DeviceComponent
   ],
   imports: [
     BrowserModule,
