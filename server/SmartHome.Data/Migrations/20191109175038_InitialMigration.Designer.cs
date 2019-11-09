@@ -10,8 +10,8 @@ using SmartHome.Data;
 namespace SmartHome.Data.Migrations
 {
     [DbContext(typeof(SmartHomeContext))]
-    [Migration("20191108214828_FixedInitialMigration")]
-    partial class FixedInitialMigration
+    [Migration("20191109175038_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -142,8 +142,6 @@ namespace SmartHome.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(40);
 
-                    b.Property<bool>("IsAdmin");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .IsFixedLength(true)
@@ -169,6 +167,8 @@ namespace SmartHome.Data.Migrations
                     b.Property<Guid>("UserId");
 
                     b.Property<Guid>("SmartHomeEntityId");
+
+                    b.Property<bool>("IsAdmin");
 
                     b.HasKey("UserId", "SmartHomeEntityId");
 

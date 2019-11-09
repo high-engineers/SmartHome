@@ -140,8 +140,6 @@ namespace SmartHome.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(40);
 
-                    b.Property<bool>("IsAdmin");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .IsFixedLength(true)
@@ -167,6 +165,8 @@ namespace SmartHome.Data.Migrations
                     b.Property<Guid>("UserId");
 
                     b.Property<Guid>("SmartHomeEntityId");
+
+                    b.Property<bool>("IsAdmin");
 
                     b.HasKey("UserId", "SmartHomeEntityId");
 
