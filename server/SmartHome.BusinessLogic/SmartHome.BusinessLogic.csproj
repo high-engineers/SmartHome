@@ -5,8 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Home\CommandHandlers\" />
-    <Folder Include="Home\Commands\" />
+    <Compile Remove="Home\CommandHandlers\**" />
+    <Compile Remove="Home\Commands\**" />
+    <EmbeddedResource Remove="Home\CommandHandlers\**" />
+    <EmbeddedResource Remove="Home\Commands\**" />
+    <None Remove="Home\CommandHandlers\**" />
+    <None Remove="Home\Commands\**" />
   </ItemGroup>
 
   <ItemGroup>

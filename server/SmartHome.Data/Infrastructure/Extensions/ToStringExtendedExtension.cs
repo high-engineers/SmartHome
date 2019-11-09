@@ -6,15 +6,15 @@ namespace SmartHome.Data.Infrastructure.Extensions
     {
         public static string ToStringExtended(this ComponentTypeEnum componentType)
         {
-            switch(componentType)
+            switch (componentType)
             {
-                case ComponentTypeEnum.LIGHT_BULB:
+                case ComponentTypeEnum.LightBulb:
                     return "Light bulb";
-                case ComponentTypeEnum.LIGHT_SENSOR:
+                case ComponentTypeEnum.LightSensor:
                     return "Light sensor";
-                case ComponentTypeEnum.SWITCH:
+                case ComponentTypeEnum.Switch:
                     return "Switch";
-                case ComponentTypeEnum.THERMOMETER:
+                case ComponentTypeEnum.Thermometer:
                     return "Thermometer";
                 default:
                     return "Unknown";
@@ -23,22 +23,18 @@ namespace SmartHome.Data.Infrastructure.Extensions
 
         public static string ToStringExtended(this ComponentStateEnum componentState)
         {
-            switch(componentState)
+            switch (componentState)
             {
-                case ComponentStateEnum.ON:
+                case ComponentStateEnum.On:
                     return "ON";
-                case ComponentStateEnum.OFF:
+                case ComponentStateEnum.Off:
                     return "OFF";
-                case ComponentStateEnum.COLLECTING:
+                case ComponentStateEnum.Collecting:
                     return "Collecting";
-                case ComponentStateEnum.UNKNOWN:
+                case ComponentStateEnum.Unknown:
                 default:
                     return "Unknown";
             }
         }
-
-
     }
-
-    
 }

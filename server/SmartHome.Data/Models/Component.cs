@@ -17,6 +17,5 @@ namespace SmartHome.Data.Models
         public virtual Module Module { get; set; }
 
         public virtual ICollection<ComponentData> ComponentData { get; set; }
-
     }
 }

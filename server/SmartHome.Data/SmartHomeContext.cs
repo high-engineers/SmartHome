@@ -15,6 +15,7 @@ namespace SmartHome.Data
         public SmartHomeContext(DbContextOptions<SmartHomeContext> options) : base(options)
         {
         }
+
         public DbSet<Component> Components { get; set; }
         public DbSet<ComponentData> ComponentData { get; set; }
         public DbSet<ComponentType> ComponentTypes { get; set; }
@@ -34,35 +35,37 @@ namespace SmartHome.Data
             OnUserCreated(modelBuilder);
             OnUserSmartHomeEntityCreated(modelBuilder);
         }
+
         private void OnComponentCreated(ModelBuilder modelBuilder)
         {
             var entity = modelBuilder.Entity<Component>();
 
             entity
                 .ToTable("Component");
+
             entity
-                .HasKey(component => component.ComponentId);
+                .HasKey(x => x.ComponentId);
 
             entity
                 .Property(x => x.ComponentState)
                 .HasConversion
                 (
-                    v => v.ToStringExtended(),
-                    v => (ComponentStateEnum)Enum.Parse(typeof(ComponentStateEnum), v)
+                    x => x.ToStringExtended(),
+                    x => (ComponentStateEnum)Enum.Parse(typeof(ComponentStateEnum), x)
                 )
                 .HasMaxLength(10)
                 .IsRequired();
 
             entity
-                .HasOne<ComponentType>(component => component.ComponentType)
-                .WithMany(componentTypes => componentTypes.Components)
-                .HasForeignKey(component => component.ComponentTypeId)
+                .HasOne(x => x.ComponentType)
+                .WithMany(x => x.Components)
+                .HasForeignKey(x => x.ComponentTypeId)
                 .IsRequired();
 
             entity
-                .HasOne<Module>(component => component.Module)
-                .WithMany(modules => modules.Components)
-                .HasForeignKey(component => component.ModuleId)
+                .HasOne(x => x.Module)
+                .WithMany(x => x.Components)
+                .HasForeignKey(x => x.ModuleId)
                 .IsRequired();
 
             entity
@@ -73,10 +76,12 @@ namespace SmartHome.Data
 
         private void OnComponentDataCreated(ModelBuilder modelBuilder)
         {
-           
+
             var entity = modelBuilder.Entity<ComponentData>();
+
             entity
-               .ToTable("ComponentData");
+                .ToTable("ComponentData");
+
             entity
                 .HasKey(x => x.ComponentDataId);
 
@@ -95,7 +100,7 @@ namespace SmartHome.Data
                 .IsRequired();
 
             entity
-                .HasOne<Component>(x => x.Component)
+                .HasOne(x => x.Component)
                 .WithMany(x => x.ComponentData)
                 .HasForeignKey(x => x.ComponentId)
                 .IsRequired();
@@ -105,8 +110,10 @@ namespace SmartHome.Data
         private void OnComponentTypeCreated(ModelBuilder modelBuilder)
         {
             var entity = modelBuilder.Entity<ComponentType>();
+
             entity
-               .ToTable("ComponentType");
+                .ToTable("ComponentType");
+
             entity
                 .HasKey(x => x.ComponentTypeId);
 
@@ -129,8 +136,10 @@ namespace SmartHome.Data
         private void OnModuleCreated(ModelBuilder modelBuilder)
         {
             var entity = modelBuilder.Entity<Module>();
+
             entity
-               .ToTable("Module");
+                .ToTable("Module");
+
             entity
                 .HasKey(x => x.ModuleId);
 
@@ -145,11 +154,14 @@ namespace SmartHome.Data
                 .IsRequired();
 
         }
+
         private void OnRoomCreated(ModelBuilder modelBuilder)
         {
             var entity = modelBuilder.Entity<Room>();
+
             entity
-               .ToTable("Room");
+                 .ToTable("Room");
+
             entity
                 .HasKey(x => x.RoomId);
 
@@ -159,7 +171,7 @@ namespace SmartHome.Data
                 .IsRequired();
 
             entity
-                .HasOne<SmartHomeEntity>(x => x.SmartHomeEntity)
+                .HasOne(x => x.SmartHomeEntity)
                 .WithMany(x => x.Rooms)
                 .HasForeignKey(x => x.SmartHomeEntityId)
                 .IsRequired();
@@ -168,8 +180,10 @@ namespace SmartHome.Data
         private void OnSmartHomeEntityCreated(ModelBuilder modelBuilder)
         {
             var entity = modelBuilder.Entity<SmartHomeEntity>();
+
             entity
-               .ToTable("SmartHomeEntity");
+                .ToTable("SmartHomeEntity");
+
             entity
                 .HasKey(x => x.SmartHomeEntityId);
 
@@ -182,14 +196,16 @@ namespace SmartHome.Data
                 .HasMaxLength(15)
                 .IsFixedLength(true)
                 .IsRequired();
-           
+
         }
 
         private void OnUserCreated(ModelBuilder modelBuilder)
         {
             var entity = modelBuilder.Entity<User>();
+
             entity
-               .ToTable("User");
+                .ToTable("User");
+
             entity
                 .HasKey(x => x.UserId);
 
@@ -197,14 +213,14 @@ namespace SmartHome.Data
                .Property(x => x.Username)
                .HasMaxLength(20)
                .IsRequired();
+
             entity
                 .HasIndex(x => x.Username)
                 .IsUnique();
+
             entity
                 .HasIndex(x => x.Email)
                 .IsUnique();
-
-
 
             entity
                 .Property(x => x.Password)
@@ -217,27 +233,31 @@ namespace SmartHome.Data
                 .HasMaxLength(40)
                 .IsRequired();
 
+        }
+
+        private void OnUserSmartHomeEntityCreated(ModelBuilder modelBuilder)
+        {
+            var entity = modelBuilder.Entity<UserSmartHomeEntity>();
+
+            entity
+                .ToTable("UserSmartHomeEntity");
+
+            entity
+                .HasKey(x => new { x.UserId, x.SmartHomeEntityId });
+
+            entity
+                .HasOne(x => x.User)
+                .WithMany(x => x.UserSmartHomeEntities)
+                .HasForeignKey(x => x.UserId);
+
+            entity
+               .HasOne(x => x.SmartHomeEntity)
+               .WithMany(x => x.UserSmartHomeEntities)
+               .HasForeignKey(x => x.SmartHomeEntityId);
+
             entity
                 .Property(x => x.IsAdmin)
                 .IsRequired();
-        }
-        private void OnUserSmartHomeEntityCreated(ModelBuilder modelBuilder)
-        {
-            
-            var entity = modelBuilder.Entity<UserSmartHomeEntity>();
-            entity
-               .ToTable("UserSmartHomeEntity");
-            entity
-                .HasKey(x => new { x.UserId, x.SmartHomeEntityId});
-
-            entity
-                .HasOne<User>(x => x.User)
-                .WithMany(x => x.UserSmartHomeEntities)
-                .HasForeignKey(x => x.UserId);
-            entity
-               .HasOne<SmartHomeEntity>(x => x.SmartHomeEntity)
-               .WithMany(x => x.UserSmartHomeEntities)
-               .HasForeignKey(x => x.SmartHomeEntityId);
         }
 
     }

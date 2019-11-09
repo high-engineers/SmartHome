@@ -2,9 +2,9 @@
 {
     public enum ComponentStateEnum
     {
-        ON,
-        OFF,
-        COLLECTING,
-        UNKNOWN
+        On,
+        Off,
+        Collecting,
+        Unknown
     };
 }

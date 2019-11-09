@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using SmartHome.Data.Model;
 
 namespace SmartHome.Data
 {

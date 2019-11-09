@@ -2,10 +2,10 @@
 {
     public enum ComponentTypeEnum
     {
-        THERMOMETER,
-        LIGHT_SENSOR,
-        HUMIDITY_SENSOR,
-        LIGHT_BULB,
-        SWITCH
+        Thermometer,
+        LightSensor,
+        HumiditySensor,
+        LightBulb,
+        Switch
     }
 }

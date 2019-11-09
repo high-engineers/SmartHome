@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SmartHome.Data.Models
 {
     public class UserSmartHomeEntity
     {
+        public bool IsAdmin { get; set; }
 
         //FKs and nav props
         public Guid UserId { get; set; }
