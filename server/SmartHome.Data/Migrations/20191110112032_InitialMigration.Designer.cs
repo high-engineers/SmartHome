@@ -10,7 +10,7 @@ using SmartHome.Data;
 namespace SmartHome.Data.Migrations
 {
     [DbContext(typeof(SmartHomeContext))]
-    [Migration("20191109175038_InitialMigration")]
+    [Migration("20191110112032_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
