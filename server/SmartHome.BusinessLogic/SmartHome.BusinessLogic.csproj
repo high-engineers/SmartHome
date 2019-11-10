@@ -1,12 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="AdminPanel\" />
-    <Folder Include="Home\" />
+    <Compile Remove="Home\CommandHandlers\**" />
+    <Compile Remove="Home\Commands\**" />
+    <EmbeddedResource Remove="Home\CommandHandlers\**" />
+    <EmbeddedResource Remove="Home\Commands\**" />
+    <None Remove="Home\CommandHandlers\**" />
+    <None Remove="Home\Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartHome.Data\SmartHome.Data.csproj" />
   </ItemGroup>
 
 </Project>
