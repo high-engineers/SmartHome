@@ -39,7 +39,7 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    projects: server/SmartHome/SmartHome.Web.csproj
+    projects: server/SmartHome.API/SmartHome.API.csproj
     arguments: '-o $(Build.BinariesDirectory)/app -c Release -f netcoreapp2.2'
     zipAfterPublish: false
     modifyOutputPath: false
