@@ -19,7 +19,6 @@ namespace SmartHome.Data
         public DbSet<Component> Components { get; set; }
         public DbSet<ComponentData> ComponentData { get; set; }
         public DbSet<ComponentType> ComponentTypes { get; set; }
-        public DbSet<Module> Modules { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<SmartHomeEntity> SmartHomeEntities { get; set; }
         public DbSet<User> Users { get; set; }
@@ -29,7 +28,6 @@ namespace SmartHome.Data
             OnComponentCreated(modelBuilder);
             OnComponentDataCreated(modelBuilder);
             OnComponentTypeCreated(modelBuilder);
-            OnModuleCreated(modelBuilder);
             OnRoomCreated(modelBuilder);
             OnSmartHomeEntityCreated(modelBuilder);
             OnUserCreated(modelBuilder);
@@ -57,26 +55,25 @@ namespace SmartHome.Data
                 .IsRequired();
 
             entity
+                .Property(x => x.Name)
+                .HasMaxLength(30)
+                .IsRequired();
+
+            entity
                 .HasOne(x => x.ComponentType)
                 .WithMany(x => x.Components)
                 .HasForeignKey(x => x.ComponentTypeId)
                 .IsRequired();
 
             entity
-                .HasOne(x => x.Module)
+                .HasOne(x => x.Room)
                 .WithMany(x => x.Components)
-                .HasForeignKey(x => x.ModuleId)
+                .HasForeignKey(x => x.RoomId)
                 .IsRequired();
-
-            entity
-                .HasMany(x => x.ComponentData)
-                .WithOne(x => x.Component)
-                .HasForeignKey(x => x.ComponentId);
         }
 
         private void OnComponentDataCreated(ModelBuilder modelBuilder)
         {
-
             var entity = modelBuilder.Entity<ComponentData>();
 
             entity
@@ -104,7 +101,6 @@ namespace SmartHome.Data
                 .WithMany(x => x.ComponentData)
                 .HasForeignKey(x => x.ComponentId)
                 .IsRequired();
-
         }
 
         private void OnComponentTypeCreated(ModelBuilder modelBuilder)
@@ -130,29 +126,6 @@ namespace SmartHome.Data
             entity
                 .Property(x => x.IsSwitchable)
                 .IsRequired();
-
-        }
-
-        private void OnModuleCreated(ModelBuilder modelBuilder)
-        {
-            var entity = modelBuilder.Entity<Module>();
-
-            entity
-                .ToTable("Module");
-
-            entity
-                .HasKey(x => x.ModuleId);
-
-            entity
-                .Property(x => x.IsConnected)
-                .IsRequired();
-
-            entity
-                .HasOne<Room>(x => x.Room)
-                .WithMany(x => x.Modules)
-                .HasForeignKey(x => x.RoomId)
-                .IsRequired();
-
         }
 
         private void OnRoomCreated(ModelBuilder modelBuilder)
@@ -196,7 +169,6 @@ namespace SmartHome.Data
                 .HasMaxLength(15)
                 .IsFixedLength(true)
                 .IsRequired();
-
         }
 
         private void OnUserCreated(ModelBuilder modelBuilder)
@@ -232,7 +204,6 @@ namespace SmartHome.Data
                 .Property(x => x.Email)
                 .HasMaxLength(40)
                 .IsRequired();
-
         }
 
         private void OnUserSmartHomeEntityCreated(ModelBuilder modelBuilder)
@@ -259,6 +230,5 @@ namespace SmartHome.Data
                 .Property(x => x.IsAdmin)
                 .IsRequired();
         }
-
     }
 }
