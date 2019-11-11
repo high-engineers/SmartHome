@@ -9,15 +9,15 @@ namespace SmartHome.Data.Infrastructure.Extensions
             switch (componentType)
             {
                 case ComponentTypeEnum.LightBulb:
-                    return "Light bulb";
+                    return "LightBulb";
                 case ComponentTypeEnum.LightSensor:
-                    return "Light sensor";
+                    return "LightSensor";
                 case ComponentTypeEnum.Switch:
                     return "Switch";
                 case ComponentTypeEnum.Thermometer:
                     return "Thermometer";
                 case ComponentTypeEnum.MotionSensor:
-                    return "Motion sensor";
+                    return "MotionSensor";
                 default:
                     return "Unknown";
             }
