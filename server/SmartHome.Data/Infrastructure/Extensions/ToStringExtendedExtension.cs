@@ -16,6 +16,8 @@ namespace SmartHome.Data.Infrastructure.Extensions
                     return "Switch";
                 case ComponentTypeEnum.Thermometer:
                     return "Thermometer";
+                case ComponentTypeEnum.MotionSensor:
+                    return "Motion sensor";
                 default:
                     return "Unknown";
             }
