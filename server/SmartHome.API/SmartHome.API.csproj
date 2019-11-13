@@ -17,9 +17,4 @@
     <ProjectReference Include="..\SmartHome.BusinessLogic\SmartHome.BusinessLogic.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\Mappers\" />
-    <Folder Include="Rooms\Mappers\" />
-  </ItemGroup>
-
 </Project>

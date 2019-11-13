@@ -22,6 +22,7 @@ namespace SmartHome.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<SmartHomeEntity> SmartHomeEntities { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserSmartHomeEntity> UserSmartHomeEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

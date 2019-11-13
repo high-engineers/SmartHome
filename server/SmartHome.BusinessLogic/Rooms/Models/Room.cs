@@ -1,15 +1,16 @@
-﻿using SmartHome.API.Components.WebModels;
+﻿using SmartHome.BusinessLogic.Components.Models;
 using System;
 using System.Collections.Generic;
 
-namespace SmartHome.API.Rooms.WebModels
+namespace SmartHome.BusinessLogic.Rooms.Models
 {
-    public class RoomWebModel
+    public class Room
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public decimal Temperature { get; set; }
         public decimal Humidity { get; set; }
-        public IReadOnlyCollection<DeviceWebModel> Devices { get; set; }
+        public IReadOnlyCollection<Device> Devices { get; set; }
+
     }
 }

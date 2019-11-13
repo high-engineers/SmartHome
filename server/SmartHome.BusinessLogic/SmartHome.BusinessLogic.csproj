@@ -13,11 +13,5 @@
   <ItemGroup>
     <ProjectReference Include="..\SmartHome.Data\SmartHome.Data.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Rooms\Commands\" />
-    <Folder Include="Rooms\CommandHandlers\" />
-    <Folder Include="Components\" />
-  </ItemGroup>
-
+  
 </Project>
