@@ -18,9 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Mappers\" />
     <Folder Include="Rooms\Mappers\" />
-    <Folder Include="Rooms\Validators\" />
-    <Folder Include="Rooms\WebModels\" />
   </ItemGroup>
 
 </Project>

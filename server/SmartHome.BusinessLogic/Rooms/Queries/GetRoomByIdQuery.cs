@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SmartHome.BusinessLogic.Home.Queries
+namespace SmartHome.BusinessLogic.Rooms.Queries
 {
     public class GetRoomByIdQuery
     {

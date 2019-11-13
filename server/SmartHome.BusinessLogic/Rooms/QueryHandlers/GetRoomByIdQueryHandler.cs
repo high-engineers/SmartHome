@@ -1,24 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SmartHome.BusinessLogic.Home.Queries;
 using SmartHome.BusinessLogic.Infrastructure.Extensions;
+using SmartHome.BusinessLogic.Rooms.Queries;
 using SmartHome.Data;
 using System.Threading.Tasks;
 
-namespace SmartHome.BusinessLogic.Home.QueryHandlers
+namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
 {
     public class GetRoomByIdQueryHandler
     {
-        private SmartHomeContext _dataContext;
+        private SmartHomeContext _context;
 
         public GetRoomByIdQueryHandler(SmartHomeContext dataContext)
         {
-            _dataContext = dataContext;
+            _context = dataContext;
         }
 
         public async Task<ObjectResult> HandleAsync(GetRoomByIdQuery query)
         {
-            var room = await _dataContext.Rooms.SingleAsync(x => x.RoomId == query.Id);
+            var room = await _context.Rooms.SingleAsync(x => x.RoomId == query.Id);
 
             return room.ToSuccessfulResult();
         }

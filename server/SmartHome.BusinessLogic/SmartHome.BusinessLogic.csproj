@@ -15,8 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Home\Commands\" />
-    <Folder Include="Home\CommandHandlers\" />
+    <Folder Include="Rooms\Commands\" />
+    <Folder Include="Rooms\CommandHandlers\" />
+    <Folder Include="Components\" />
   </ItemGroup>
 
 </Project>
