@@ -5,15 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Home\CommandHandlers\**" />
-    <Compile Remove="Home\Commands\**" />
-    <EmbeddedResource Remove="Home\CommandHandlers\**" />
-    <EmbeddedResource Remove="Home\Commands\**" />
-    <None Remove="Home\CommandHandlers\**" />
-    <None Remove="Home\Commands\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
@@ -21,6 +12,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SmartHome.Data\SmartHome.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Home\Commands\" />
+    <Folder Include="Home\CommandHandlers\" />
   </ItemGroup>
 
 </Project>

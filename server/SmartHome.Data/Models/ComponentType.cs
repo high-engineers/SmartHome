@@ -12,6 +12,5 @@ namespace SmartHome.Data.Models
 
         //FKs and nav props
         public virtual ICollection<Component> Components{ get; set; }
-
     }
 }
