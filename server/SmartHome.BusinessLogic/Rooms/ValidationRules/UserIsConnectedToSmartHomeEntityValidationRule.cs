@@ -1,15 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using SmartHome.BusinessLogic.Infrastructure.Models;
 using SmartHome.Data;
+using System;
+using System.Threading.Tasks;
 
 namespace SmartHome.BusinessLogic.Rooms.ValidationRules
 {
     public class UserIsConnectedToSmartHomeEntityValidationRule : IValidationRule<UserIsConnectedToSmartHomeEntityValidationRuleData>
     {
-        private const string UserIsNotConnectedToSmartHomeErrorMessage = "UserIsNotConnectedToSmartHomeError";
+        private const string _userIsNotConnectedToSmartHomeErrorMessage = "UserIsNotConnectedToSmartHomeError";
 
         private readonly SmartHomeContext _context;
 
@@ -25,7 +25,7 @@ namespace SmartHome.BusinessLogic.Rooms.ValidationRules
 
             return result
                 ? Result<object>.Success()
-                : Result<object>.Fail(new ResultError(StatusCodes.Status403Forbidden, UserIsNotConnectedToSmartHomeErrorMessage));
+                : Result<object>.Fail(new ResultError(StatusCodes.Status403Forbidden, _userIsNotConnectedToSmartHomeErrorMessage));
         }
     }
 

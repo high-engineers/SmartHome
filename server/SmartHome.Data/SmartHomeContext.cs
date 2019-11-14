@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartHome.Data.Models;
 using SmartHome.Data.Infrastructure.Extensions;
-using SmartHome.Data.Model.Enums;
+using SmartHome.Data.Infrastructure.Enums;
 using System;
 
 namespace SmartHome.Data

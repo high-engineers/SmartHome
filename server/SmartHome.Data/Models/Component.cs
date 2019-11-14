@@ -1,4 +1,4 @@
-﻿using SmartHome.Data.Model.Enums;
+﻿using SmartHome.Data.Infrastructure.Enums;
 using System;
 using System.Collections.Generic;
 

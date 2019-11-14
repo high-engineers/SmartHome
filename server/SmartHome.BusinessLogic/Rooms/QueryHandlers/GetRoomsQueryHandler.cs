@@ -6,7 +6,7 @@ using SmartHome.BusinessLogic.Rooms.Models;
 using SmartHome.BusinessLogic.Rooms.Queries;
 using SmartHome.BusinessLogic.Rooms.ValidationRules;
 using SmartHome.Data;
-using SmartHome.Data.Model.Enums;
+using SmartHome.Data.Infrastructure.Enums;
 using SmartHome.Data.Models.Extenstions;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,9 +80,9 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
             return Result<object>.Success();
         }
 
-        private Task<List<Data.Models.Room>> GetRooms(GetRoomsQuery query)
+        private async Task<List<Data.Models.Room>> GetRooms(GetRoomsQuery query)
         {
-            return _context.Rooms
+            return await _context.Rooms
                 .Where(x => x.SmartHomeEntityId == query.SmartHomeEntityId)
                 .Include(x => x.Components)
                     .ThenInclude(x => x.ComponentType)

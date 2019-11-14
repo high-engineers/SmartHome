@@ -1,4 +1,4 @@
-﻿namespace SmartHome.Data.Model.Enums
+﻿namespace SmartHome.Data.Infrastructure.Enums
 {
     public enum ComponentStateEnum
     {
