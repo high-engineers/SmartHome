@@ -55,11 +55,6 @@ namespace SmartHome.Data
                 .IsRequired();
 
             entity
-                .Property(x => x.Name)
-                .HasMaxLength(30)
-                .IsRequired();
-
-            entity
                 .HasOne(x => x.ComponentType)
                 .WithMany(x => x.Components)
                 .HasForeignKey(x => x.ComponentTypeId)
@@ -89,8 +84,7 @@ namespace SmartHome.Data
 
             entity
                 .Property(x => x.Message)
-                .HasMaxLength(30)
-                .IsRequired();
+                .HasMaxLength(30);
 
             entity
                 .Property(x => x.Timestamp)
@@ -167,7 +161,6 @@ namespace SmartHome.Data
             entity
                 .Property(x => x.IpAddress)
                 .HasMaxLength(15)
-                .IsFixedLength(true)
                 .IsRequired();
         }
 
