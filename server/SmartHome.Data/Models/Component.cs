@@ -8,7 +8,6 @@ namespace SmartHome.Data.Models
     {
         public Guid ComponentId { get; set; }
         public ComponentStateEnum ComponentState { get; set; }
-        public string Name { get; set; }
 
         //FKs and nav props
         public Guid ComponentTypeId { get; set; }
