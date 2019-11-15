@@ -103,12 +103,11 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
                 Id = room.RoomId,
                 Devices = room.Components
                     .Where(x => x.RoomId == room.RoomId && x.ComponentType.IsSwitchable)
-                    .Select(x => new Components.Models.DeviceDetails
+                    .Select(x => new DeviceDetails
                     {
                         Id = x.ComponentId,
                         IsOn = x.ComponentState == ComponentStateEnum.On,
                         Type = x.ComponentType.Type.ToString(),
-                        Name = x.Name
                     })
                     .ToList(),
                 SensorsHistory = room.Components
