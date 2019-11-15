@@ -45,6 +45,10 @@ namespace SmartHome.Data
                 .HasKey(x => x.ComponentId);
 
             entity
+                .Property(x => x.Name)
+                .HasMaxLength(30);
+
+            entity
                 .Property(x => x.ComponentState)
                 .HasConversion
                 (
