@@ -24,7 +24,7 @@ namespace SmartHome.API
         {
             services.AddDbContext<SmartHomeContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetValue<string>("ConnectionStrings:SmartHome"));
+                options.UseSqlServer(Configuration.GetConnectionString("SmartHome"));
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -35,8 +35,8 @@ namespace SmartHome.API
                 .Where(type => type.GetInterfaces().Any(interfaceType => interfaceType == typeof(IModelBinder)))
                 .AsSelf();
 
-            new BusinessLogic.ModuleBootstraper(builder);
             new Data.ModuleBootstraper(builder);
+            new BusinessLogic.ModuleBootstraper(builder);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
