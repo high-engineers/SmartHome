@@ -101,6 +101,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
             return new RoomDetails
             {
                 Id = room.RoomId,
+                Name = room.Name,
                 Devices = room.Components
                     .Where(x => x.RoomId == room.RoomId && x.ComponentType.IsSwitchable)
                     .Select(x => new DeviceDetails
@@ -108,6 +109,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
                         Id = x.ComponentId,
                         IsOn = x.ComponentState == ComponentStateEnum.On,
                         Type = x.ComponentType.Type.ToString(),
+                        Name = x.Name
                     })
                     .ToList(),
                 SensorsHistory = room.Components
