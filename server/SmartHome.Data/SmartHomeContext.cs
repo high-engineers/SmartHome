@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SmartHome.Data.Models;
-using SmartHome.Data.Infrastructure.Extensions;
 using SmartHome.Data.Infrastructure.Enums;
+using SmartHome.Data.Models;
 using System;
 
 namespace SmartHome.Data
@@ -49,7 +48,7 @@ namespace SmartHome.Data
                 .Property(x => x.ComponentState)
                 .HasConversion
                 (
-                    x => x.ToStringExtended(),
+                    x => x.ToString(),
                     x => (ComponentStateEnum)Enum.Parse(typeof(ComponentStateEnum), x)
                 )
                 .HasMaxLength(10)
@@ -118,7 +117,7 @@ namespace SmartHome.Data
                 .Property(x => x.Type)
                 .HasConversion
                 (
-                    v => v.ToStringExtended(),
+                    v => v.ToString(),
                     v => (ComponentTypeEnum)Enum.Parse(typeof(ComponentTypeEnum), v)
                 )
                 .HasMaxLength(30)
