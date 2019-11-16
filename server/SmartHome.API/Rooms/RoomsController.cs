@@ -31,7 +31,7 @@ namespace SmartHome.API.Rooms
             var result = await _getRoomsQueryHandler.HandleAsync(new GetRoomsQuery
             {
                 SmartHomeEntityId = queryParam.SmartHomeEntityId,
-                UserId = queryParam.UserId
+                UserId = queryParam.RequestedByUserId
             });
 
             if (!result.IsSuccess)
@@ -49,7 +49,7 @@ namespace SmartHome.API.Rooms
             var result = await _getRoomByIdQueryHandler.HandleAsync(new GetRoomByIdQuery
             {
                 SmartHomeEntityId = queryParam.SmartHomeEntityId,
-                UserId = queryParam.UserId,
+                UserId = queryParam.RequestedByUserId,
                 RoomId = roomId
             });
 
@@ -62,14 +62,15 @@ namespace SmartHome.API.Rooms
         }
 
         [HttpPut(Route + "/{roomId}/components/{componentId}")]
-        public async Task<IActionResult> SwitchDevice([FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam, [FromRoute] Guid roomId, [FromRoute] Guid componentId, [FromQuery] bool isOn)
+        public async Task<IActionResult> SwitchDevice([FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam, [FromRoute] Guid roomId, [FromRoute] Guid componentId, [FromQuery] bool newState)
         {
             var result = await _switchDeviceCommandHandler.HandleAsync(new SwitchDeviceCommand
             {
-                UserId = queryParam.UserId,
+                UserId = queryParam.RequestedByUserId,
                 SmartHomeEntityId = queryParam.SmartHomeEntityId,
                 ComponentId = componentId,
-                NewState = isOn
+                NewState = newState,
+                RoomId = roomId
             });
 
             if (!result.IsSuccess)
@@ -79,6 +80,5 @@ namespace SmartHome.API.Rooms
 
             return new OkObjectResult(true);
         }
-
     }
 }

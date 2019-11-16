@@ -4,7 +4,7 @@ namespace SmartHome.API.Infrastructure
 {
     public class UserIdSmartHomeEntityIdQueryParam
     {
-        public Guid UserId { get; set; }
+        public Guid RequestedByUserId { get; set; }
         public Guid SmartHomeEntityId { get; set; }
     }
 }
