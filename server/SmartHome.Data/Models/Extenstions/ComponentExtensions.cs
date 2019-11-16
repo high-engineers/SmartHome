@@ -11,22 +11,24 @@ namespace SmartHome.Data.Models.Extenstions
             return components.FirstOrDefault(x => x.ComponentType.Type == type);
         }
 
-        public static decimal GetCurrentTemperature(this ICollection<Component> components)
+        public static decimal? GetCurrentTemperature(this ICollection<Component> components)
         {
-            return components
+            return 
+                components
                 .WhereTypeIs(ComponentTypeEnum.Thermometer)
-                    .ComponentData
-                    .OrderByDescending(x => x.Timestamp)
-                    .FirstOrDefault().Reading;
+                ?.ComponentData
+                .OrderByDescending(x => x.Timestamp)
+                .FirstOrDefault()?.Reading;
         }
 
-        public static decimal GetCurrentHumidity(this ICollection<Component> components)
+        public static decimal? GetCurrentHumidity(this ICollection<Component> components)
         {
-            return components
+            return 
+                components
                 .WhereTypeIs(ComponentTypeEnum.HumiditySensor)
-                    .ComponentData
-                    .OrderByDescending(x => x.Timestamp)
-                    .FirstOrDefault().Reading;
+                ?.ComponentData.OrderByDescending(x => x.Timestamp)
+                .FirstOrDefault()
+                ?.Reading;
         }
     }
 }
