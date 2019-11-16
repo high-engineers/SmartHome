@@ -7,8 +7,9 @@
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 
-#define DHT11PIN 13 //d7
-#define MOTION 12   //d6
+#define MOTION 12     //d6
+#define DHT11PIN 13   //d7
+#define RELAY_OUT 15  //d8
 #define BPIN A0
 
 dht11 DHT11;
@@ -16,7 +17,7 @@ int bvalue;
 float brightness;
 float humidity;
 float temperature;
-float minbrightness;
+float minBrightness;
 float minHumidity;
 float minTemperature;
 float maxBrightness;
@@ -55,8 +56,11 @@ void setup() {
   pinMode(DHT11PIN, INPUT);
   pinMode(BPIN, INPUT);
   pinMode(MOTION, INPUT);
+  pinMode(RELAY_OUT, OUTPUT);
+  digitalWrite(RELAY_OUT, LOW);
   Serial.begin(115200);
   while(!Serial);
+  minBrightness = 60.0;
 
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP(wifiSSID, wifiPassword);
@@ -69,8 +73,19 @@ void setup() {
   Serial.println("Connected!");
 }
 
+void bulbActivation(){
+  if (minBrightness > brightness) {
+    digitalWrite(RELAY_OUT, HIGH);
+    Serial.println("ZAPALAM ŚWIATŁO");
+  } else {
+    digitalWrite(RELAY_OUT, LOW);
+    Serial.println("GASZĘ ŚWIATŁO");
+  }
+}
+
 void loop() {
-//  getMeasurements();
+  getMeasurements();
+  bulbActivation();
 //  getInfoFromServer();
 //  if (millis() - postTime > postDelay){
 //    postTime += postDelay;
@@ -149,7 +164,7 @@ void postDataToServer(){
 
 void setUserVariables(String data){
   deserializeJson(dataFromServer, data);
-  minbrightness = dataFromServer["minBrightness"];
+  minBrightness = dataFromServer["minBrightness"];
   minHumidity = dataFromServer["minHumidity"];
   minTemperature = dataFromServer["minTemperature"];
   maxBrightness = dataFromServer["maxBrightness"];
