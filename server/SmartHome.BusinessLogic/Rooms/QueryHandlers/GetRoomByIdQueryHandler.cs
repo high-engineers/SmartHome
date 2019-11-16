@@ -93,7 +93,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
                     .ThenInclude(x => x.ComponentType)
                 .Include(x => x.Components)
                     .ThenInclude(x => x.ComponentData)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.RoomId == query.RoomId);
         }
 
         private RoomDetails BuildRoomDetails(Data.Models.Room room)
