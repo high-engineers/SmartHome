@@ -1,5 +1,6 @@
 ﻿using SmartHome.Data.Infrastructure.Enums;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace SmartHome.Data.Models.Extenstions
@@ -9,6 +10,16 @@ namespace SmartHome.Data.Models.Extenstions
         public static Component WhereTypeIs(this ICollection<Component> components, ComponentTypeEnum type)
         {
             return components.FirstOrDefault(x => x.ComponentType.Type == type);
+        }
+
+        public static bool WhereTypeIn(this Component component, ICollection<ComponentTypeEnum> types)
+        {
+            return types.Contains(component.ComponentType.Type);
+        }
+
+        public static bool IsDevice(this Component component)
+        {
+            return component.WhereTypeIn(new Collection<ComponentTypeEnum> { ComponentTypeEnum.LightBulb, ComponentTypeEnum.MotionSensor, ComponentTypeEnum.Switch });
         }
 
         public static decimal? GetCurrentTemperature(this ICollection<Component> components)

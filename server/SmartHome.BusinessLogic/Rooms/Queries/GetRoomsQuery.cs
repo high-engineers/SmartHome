@@ -3,10 +3,8 @@ using System;
 
 namespace SmartHome.BusinessLogic.Rooms.Queries
 {
-    public class GetRoomsQuery : IRequestedByUser
+    public class GetRoomsQuery : BaseCqrsParam
     {
-        public Guid SmartHomeEntityId { get; set; }
-
-        public Guid RequestedByUserId { get; set; }
+       
     }
 }

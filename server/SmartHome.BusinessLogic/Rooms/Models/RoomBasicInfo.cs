@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SmartHome.BusinessLogic.Rooms.Models
 {
-    public class Room
+    public class RoomBasicInfo
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
