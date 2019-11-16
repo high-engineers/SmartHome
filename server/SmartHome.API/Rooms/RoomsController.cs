@@ -54,7 +54,7 @@ namespace SmartHome.API.Rooms
                 return result.ResultError.ToProperErrorResult();
             }
 
-            return new OkObjectResult(result);
+            return new OkObjectResult(result.Data);
         }
     }
 }
