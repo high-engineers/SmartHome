@@ -30,7 +30,7 @@ void loop() {
   } else {
     Serial.println("Przesyłam LOW");
   }
-  delay(1000);
+  delay(100);
 //  if ( millis() - timer > motionTime){
 //    digitalWrite(MOTION_OUT, LOW);
 //  } else {
