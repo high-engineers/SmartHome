@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SmartHome.API.Infrastructure;
 using SmartHome.API.Infrastructure.Extensions;
-using SmartHome.API.Rooms.Mappers;
 using SmartHome.BusinessLogic.Rooms.Queries;
 using SmartHome.BusinessLogic.Rooms.QueryHandlers;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SmartHome.API.Rooms
@@ -23,12 +22,12 @@ namespace SmartHome.API.Rooms
         }
 
         [HttpGet(Route)]
-        public async Task<IActionResult> GetRooms([FromQuery] Guid userId, [FromQuery] Guid smartHomeEntityId)
+        public async Task<IActionResult> GetRooms([FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam)
         {
             var result = await _getRoomsQueryHandler.HandleAsync(new GetRoomsQuery
             {
-                SmartHomeEntityId = smartHomeEntityId,
-                RequestedByUserId = userId
+                SmartHomeEntityId = queryParam.SmartHomeEntityId,
+                RequestedByUserId = queryParam.UserId
             });
 
             if (!result.IsSuccess)
@@ -36,16 +35,17 @@ namespace SmartHome.API.Rooms
                 return result.ResultError.ToProperErrorResult();
             }
 
-            return new OkObjectResult(result.Data.Select(x => x.ToWebModel()));
+            return new OkObjectResult(result.Data);
         }
 
+
         [HttpGet(Route + "/{roomId}")]
-        public async Task<IActionResult> GetRoomById([FromQuery] Guid userId, [FromQuery] Guid smartHomeEntityId, [FromRoute] Guid roomId)
+        public async Task<IActionResult> GetRoomById([FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam, [FromRoute] Guid roomId)
         {
             var result = await _getRoomByIdQueryHandler.HandleAsync(new GetRoomByIdQuery
             {
-                SmartHomeEntityId = smartHomeEntityId,
-                UserId = userId,
+                SmartHomeEntityId = queryParam.SmartHomeEntityId,
+                UserId = queryParam.UserId,
                 RoomId = roomId
             });
 
@@ -56,5 +56,6 @@ namespace SmartHome.API.Rooms
 
             return new OkObjectResult(result.Data);
         }
+
     }
 }
