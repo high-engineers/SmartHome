@@ -7,5 +7,6 @@ namespace SmartHome.BusinessLogic.Components.Commands
     {
         public Guid ComponentId { get; set; }
         public bool NewState { get; set; }
+        public Guid RoomId { get; set; }
     }
 }

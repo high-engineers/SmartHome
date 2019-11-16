@@ -47,7 +47,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
         private async Task<IResult<object>> IsValidAsync(GetRoomByIdQuery query)
         {
             var resultSmartHomeEntityExists = await _smartHomeEntityExistsValidationRule.ValidateAsync(query.SmartHomeEntityId);
-
+             
             if (!resultSmartHomeEntityExists.IsSuccess)
             {
                 return resultSmartHomeEntityExists;

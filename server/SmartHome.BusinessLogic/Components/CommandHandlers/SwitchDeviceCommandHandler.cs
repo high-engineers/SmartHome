@@ -17,14 +17,16 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
         private readonly UserExistsValidationRule _userExistsValidationRule;
         private readonly UserIsConnectedToSmartHomeEntityValidationRule _userIsConnectedToSmartHomeEntityValidationRule;
         private readonly DeviceExistsValidationRule _deviceExistsValidationRule;
+        private readonly DeviceIsInRoomValidationRule _deviceIsInRoomValidationRule;
 
-        public SwitchDeviceCommandHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, UserExistsValidationRule userExistsValidationRule, UserIsConnectedToSmartHomeEntityValidationRule userIsConnectedToSmartHomeEntityValidationRule, DeviceExistsValidationRule deviceExistsValidationRule)
+        public SwitchDeviceCommandHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, UserExistsValidationRule userExistsValidationRule, UserIsConnectedToSmartHomeEntityValidationRule userIsConnectedToSmartHomeEntityValidationRule, DeviceExistsValidationRule deviceExistsValidationRule, DeviceIsInRoomValidationRule deviceIsInRoomValidationRule)
         {
             _context = context;
             _smartHomeEntityExistsValidationRule = smartHomeEntityExistsValidationRule;
             _userExistsValidationRule = userExistsValidationRule;
             _userIsConnectedToSmartHomeEntityValidationRule = userIsConnectedToSmartHomeEntityValidationRule;
             _deviceExistsValidationRule = deviceExistsValidationRule;
+            _deviceIsInRoomValidationRule = deviceIsInRoomValidationRule;
         }
 
         public async Task<IResult<object>> HandleAsync(SwitchDeviceCommand command)
@@ -72,6 +74,17 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
             if (!resultDeviceExists.IsSuccess)
             {
                 return resultDeviceExists;
+            }
+
+            var resultDeviceIsInRoom = await _deviceIsInRoomValidationRule.ValidateAsync(new DeviceIsInRoomValidationRuleData
+            {
+                DeviceId = command.ComponentId,
+                RoomId = command.RoomId
+            });
+
+            if (!resultDeviceIsInRoom.IsSuccess)
+            {
+                return resultDeviceIsInRoom;
             }
 
             return Result<object>.Success();
