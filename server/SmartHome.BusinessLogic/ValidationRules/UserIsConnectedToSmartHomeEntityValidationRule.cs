@@ -5,7 +5,7 @@ using SmartHome.Data;
 using System;
 using System.Threading.Tasks;
 
-namespace SmartHome.BusinessLogic.Rooms.ValidationRules
+namespace SmartHome.BusinessLogic.ValidationRules
 {
     public class UserIsConnectedToSmartHomeEntityValidationRule : IValidationRule<UserIsConnectedToSmartHomeEntityValidationRuleData>
     {

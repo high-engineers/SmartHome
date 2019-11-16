@@ -4,9 +4,10 @@ using SmartHome.BusinessLogic.Infrastructure.Extensions;
 using SmartHome.BusinessLogic.Infrastructure.Models;
 using SmartHome.BusinessLogic.Rooms.Models;
 using SmartHome.BusinessLogic.Rooms.Queries;
-using SmartHome.BusinessLogic.Rooms.ValidationRules;
+using SmartHome.BusinessLogic.ValidationRules;
 using SmartHome.Data;
 using SmartHome.Data.Infrastructure.Enums;
+using SmartHome.Data.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -85,7 +86,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
 
         }
 
-        private async Task<Data.Models.Room> GetRoomAsync(GetRoomByIdQuery query)
+        private async Task<Room> GetRoomAsync(GetRoomByIdQuery query)
         {
             return await _context.Rooms
                 .Where(x => x.SmartHomeEntityId == query.SmartHomeEntityId)
@@ -96,7 +97,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
                 .FirstOrDefaultAsync(x => x.RoomId == query.RoomId);
         }
 
-        private RoomDetails BuildRoomDetails(Data.Models.Room room)
+        private RoomDetails BuildRoomDetails(Room room)
         {
             return new RoomDetails
             {

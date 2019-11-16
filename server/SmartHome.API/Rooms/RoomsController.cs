@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SmartHome.API.Infrastructure;
 using SmartHome.API.Infrastructure.Extensions;
+using SmartHome.BusinessLogic.Components.CommandHandlers;
+using SmartHome.BusinessLogic.Components.Commands;
 using SmartHome.BusinessLogic.Rooms.Queries;
 using SmartHome.BusinessLogic.Rooms.QueryHandlers;
 using System;
@@ -14,11 +16,13 @@ namespace SmartHome.API.Rooms
 
         private readonly GetRoomsQueryHandler _getRoomsQueryHandler;
         private readonly GetRoomByIdQueryHandler _getRoomByIdQueryHandler;
+        private readonly SwitchDeviceCommandHandler _switchDeviceCommandHandler;
 
-        public RoomsController(GetRoomsQueryHandler getRoomsQueryHandler, GetRoomByIdQueryHandler getRoomByIdQueryHandler)
+        public RoomsController(GetRoomsQueryHandler getRoomsQueryHandler, GetRoomByIdQueryHandler getRoomByIdQueryHandler, SwitchDeviceCommandHandler switchDeviceCommandHandler)
         {
             _getRoomsQueryHandler = getRoomsQueryHandler;
             _getRoomByIdQueryHandler = getRoomByIdQueryHandler;
+            _switchDeviceCommandHandler = switchDeviceCommandHandler;
         }
 
         [HttpGet(Route)]
@@ -27,7 +31,7 @@ namespace SmartHome.API.Rooms
             var result = await _getRoomsQueryHandler.HandleAsync(new GetRoomsQuery
             {
                 SmartHomeEntityId = queryParam.SmartHomeEntityId,
-                RequestedByUserId = queryParam.UserId
+                UserId = queryParam.UserId
             });
 
             if (!result.IsSuccess)
@@ -55,6 +59,25 @@ namespace SmartHome.API.Rooms
             }
 
             return new OkObjectResult(result.Data);
+        }
+
+        [HttpPut(Route + "/{roomId}/components/{componentId}")]
+        public async Task<IActionResult> SwitchDevice([FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam, [FromRoute] Guid roomId, [FromRoute] Guid componentId, [FromQuery] bool isOn)
+        {
+            var result = await _switchDeviceCommandHandler.HandleAsync(new SwitchDeviceCommand
+            {
+                UserId = queryParam.UserId,
+                SmartHomeEntityId = queryParam.SmartHomeEntityId,
+                ComponentId = componentId,
+                NewState = isOn
+            });
+
+            if (!result.IsSuccess)
+            {
+                return result.ResultError.ToProperErrorResult();
+            }
+
+            return new OkObjectResult(true);
         }
 
     }

@@ -4,9 +4,10 @@ using SmartHome.BusinessLogic.Infrastructure.Extensions;
 using SmartHome.BusinessLogic.Infrastructure.Models;
 using SmartHome.BusinessLogic.Rooms.Models;
 using SmartHome.BusinessLogic.Rooms.Queries;
-using SmartHome.BusinessLogic.Rooms.ValidationRules;
+using SmartHome.BusinessLogic.ValidationRules;
 using SmartHome.Data;
 using SmartHome.Data.Infrastructure.Enums;
+using SmartHome.Data.Models;
 using SmartHome.Data.Models.Extenstions;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,20 +33,20 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
             _userIsConnectedToSmartHomeEntityValidationRule = userIsConnectedToSmartHomeEntityValidationRule;
         }
 
-        public async Task<IResult<IReadOnlyCollection<Room>>> HandleAsync(GetRoomsQuery query)
+        public async Task<IResult<IReadOnlyCollection<RoomBasicInfo>>> HandleAsync(GetRoomsQuery query)
         {
             var validationResult = await IsValidAsync(query);
 
             if (!validationResult.IsSuccess)
             {
-                return Result<IReadOnlyCollection<Room>>.Fail(validationResult.ResultError);
+                return Result<IReadOnlyCollection<RoomBasicInfo>>.Fail(validationResult.ResultError);
             }
 
             var rooms = await GetRooms(query);
 
             return (rooms
                 .Select(BuildRoom)
-                .ToList() as IReadOnlyCollection<Room>)
+                .ToList() as IReadOnlyCollection<RoomBasicInfo>)
                 .ToSuccessfulResult();
         }
 
@@ -58,7 +59,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
                 return resultSmartHomeEntityExists;
             }
 
-            var resultUserExists = await _userExistsValidationRule.ValidateAsync(query.RequestedByUserId);
+            var resultUserExists = await _userExistsValidationRule.ValidateAsync(query.UserId);
 
             if (!resultUserExists.IsSuccess)
             {
@@ -69,7 +70,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
                 .ValidateAsync(new UserIsConnectedToSmartHomeEntityValidationRuleData
                 {
                     SmartHomeEntityId = query.SmartHomeEntityId,
-                    UserId = query.RequestedByUserId
+                    UserId = query.UserId
                 });
 
             if (!resultUserIsConnectedToSmartHomeEntity.IsSuccess)
@@ -80,7 +81,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
             return Result<object>.Success();
         }
 
-        private async Task<List<Data.Models.Room>> GetRooms(GetRoomsQuery query)
+        private async Task<List<Room>> GetRooms(GetRoomsQuery query)
         {
             return await _context.Rooms
                 .Where(x => x.SmartHomeEntityId == query.SmartHomeEntityId)
@@ -91,9 +92,9 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
                 .ToListAsync();
         }
 
-        private Room BuildRoom(Data.Models.Room room)
+        private RoomBasicInfo BuildRoom(Data.Models.Room room)
         {
-            return new Room
+            return new RoomBasicInfo
             {
                 Id = room.RoomId,
                 Name = room.Name,

@@ -19,7 +19,7 @@ namespace SmartHome.API.Infrastructure.Extensions
                 case StatusCodes.Status404NotFound:
                     return new NotFoundObjectResult(resultError.ErrorMessage);
                 default:
-                    return new BadRequestResult();
+                    return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
     }

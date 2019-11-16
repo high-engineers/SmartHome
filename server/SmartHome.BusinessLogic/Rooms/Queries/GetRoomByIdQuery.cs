@@ -1,11 +1,10 @@
-﻿using System;
+﻿using SmartHome.BusinessLogic.Infrastructure.Models;
+using System;
 
 namespace SmartHome.BusinessLogic.Rooms.Queries
 {
-    public class GetRoomByIdQuery
+    public class GetRoomByIdQuery : BaseCqrsParam
     {
-        public Guid UserId { get; set; }
-        public Guid SmartHomeEntityId { get; set; }
         public Guid RoomId { get; set; }
     }
 }

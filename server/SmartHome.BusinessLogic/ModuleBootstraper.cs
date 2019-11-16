@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using SmartHome.BusinessLogic.Infrastructure.Models;
-using SmartHome.BusinessLogic.Rooms.ValidationRules;
+using SmartHome.BusinessLogic.ValidationRules;
 using System;
 
 namespace SmartHome.BusinessLogic
