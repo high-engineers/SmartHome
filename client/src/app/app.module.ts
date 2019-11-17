@@ -1,24 +1,24 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RoomPickerComponent } from './House/Components/room-picker/room-picker.component';
-import { DevicePickerComponent } from './House/Components/device-picker/device-picker.component';
-import { RoomComponent } from './House/Components/room/room.component';
-import { DeviceComponent } from './House/Components/device/device.component';
+import { HttpClientModule }    from '@angular/common/http';
+import { LoginModule } from './login/login.module';
+import { HouseModule } from './house/house.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    RoomPickerComponent,
-    DevicePickerComponent,
-    RoomComponent,
-    DeviceComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    HttpClientModule,
+    FormsModule,
+    AppRoutingModule,
+    LoginModule,
+    HouseModule
   ],
   providers: [],
   bootstrap: [AppComponent]

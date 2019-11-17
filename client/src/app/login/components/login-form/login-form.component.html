@@ -1,0 +1,22 @@
+<div class="d-flex h-75">
+  <div class="align-self-center">
+    <br>
+    <img src="../../../../assets/images/Logo.png" alt="SmartHome" class="rounded mx-auto d-block w-25">
+    <br>
+    <div class="text-center">
+      <a class="btn btn-link" (click)="register()" role="button">
+        Create an account
+      </a>
+    </div>
+    <br>
+    <div class="form-group">
+      <input placeholder="Username" type="text" class="form-control" aria-describedby="helpId" [(ngModel)]="username">
+      <br>
+      <input placeholder="Password" type="password" class="form-control" aria-describedby="helpId" [(ngModel)]="password">
+      <br>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-outline-primary btn-lg" (click)="login()">Login</button>
+    </div>
+  </div>
+</div>

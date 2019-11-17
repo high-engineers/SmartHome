@@ -1,5 +1,5 @@
 export interface SensorHistoryEntry {
-    id: number,
+    id: string,
     time: Date,
     value: number
 }
