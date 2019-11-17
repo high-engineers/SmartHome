@@ -43,6 +43,11 @@ steps:
     arguments: '-o $(Build.BinariesDirectory)/app -c Release -f netcoreapp2.2'
     zipAfterPublish: false
     modifyOutputPath: false
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'custom'
+    custom: 'dotnet ef migrations script -i -o "$(Build.ArtifactStagingDirectory)/migrations.sql"'
+    workingDirectory: 'server/SmartHome.Data'
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(Build.BinariesDirectory)/app'
