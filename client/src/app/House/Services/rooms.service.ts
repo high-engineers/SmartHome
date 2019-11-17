@@ -7,7 +7,7 @@ import { Device } from '../Models/device';
 import { DeviceDetails } from '../Models/device-details';
 import { NewRoom } from '../Models/new-room';
 import { UserService } from '../../login/services/user.service';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
