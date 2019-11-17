@@ -46,7 +46,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'custom'
-    custom: 'dotnet ef migrations script -i -o "$(Build.ArtifactStagingDirectory)/migrations.sql"'
+    custom: 'ef migrations script -i -o "$(Build.ArtifactStagingDirectory)/migrations.sql"'
     workingDirectory: 'server/SmartHome.Data'
 - task: ArchiveFiles@2
   inputs:
