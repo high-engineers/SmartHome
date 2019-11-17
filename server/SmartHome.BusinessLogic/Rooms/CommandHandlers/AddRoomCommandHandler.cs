@@ -5,6 +5,8 @@ using SmartHome.BusinessLogic.ValidationRules;
 using SmartHome.Data;
 using SmartHome.Data.Models;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SmartHome.BusinessLogic.Rooms.CommandHandlers
@@ -19,14 +21,7 @@ namespace SmartHome.BusinessLogic.Rooms.CommandHandlers
         private readonly UserIsAdminValidationRule _userCanAddRoomValidationRule;
 
         public AddRoomCommandHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, UserExistsValidationRule userExistsValidationRule, UserIsConnectedToSmartHomeEntityValidationRule userIsConnectedToSmartHomeEntityValidationRule, AddRoomColumnValidationRule addRoomColumnValidationRule, UserIsAdminValidationRule userCanAddRoomValidationRule)
-        {
-            _context = context;
-            _smartHomeEntityExistsValidationRule = smartHomeEntityExistsValidationRule;
-            _userExistsValidationRule = userExistsValidationRule;
-            _userIsConnectedToSmartHomeEntityValidationRule = userIsConnectedToSmartHomeEntityValidationRule;
-            _addRoomColumnValidationRule = addRoomColumnValidationRule;
-            _userCanAddRoomValidationRule = userCanAddRoomValidationRule;
-        }
+        private readonly UserCanAddRoomValidationRule _userCanAddRoomValidationRule;
 
         private async Task<IResult<object>> IsValidAsync(AddRoomCommand command)
         {
