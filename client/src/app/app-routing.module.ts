@@ -5,11 +5,11 @@ import { RoomDetailsComponent } from './House/Components/room-details/room-detai
 const routes: Routes = [
   {
     path: 'login',
-    loadChildren: 'app/login/login.module#LoginModule'
+    loadChildren: './login/login.module#LoginModule'
   },
   {
     path: 'house',
-    loadChildren: 'app/house/house.module#HouseModule'
+    loadChildren: './house/house.module#HouseModule'
   }
 ];
 
