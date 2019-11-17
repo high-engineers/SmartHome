@@ -1,0 +1,19 @@
+<div *ngFor="let smartHome of smartHomes" class="row">
+  <div class="col-3">
+    <div (click)="goToSmartHome(smartHome.id)" class="card bg-light room">
+      <div class="smart-home-card">
+        <div class="card-img-overlay text-white">
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col text-center">
+            <h4>
+              {{smartHome.name}}
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

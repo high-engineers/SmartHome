@@ -1,0 +1,33 @@
+<div class="col-12">
+  <div class="chart">
+    <canvas id="lineChart"></canvas>
+  </div>
+  <br>
+
+  <div class="row">
+    <div class="container-fluid">
+      <div class="row flex-nowrap">
+        <div class="col-2 border text-center m-2 p-2" *ngFor="let device of roomDetails?.devices">
+          <div class="rounded-circle badge badge-light justify-content-center align-items-center device-icon">
+            <i class="fa fa-lightbulb-o fa-3x"></i>
+          </div>
+          <h5 class="card-title">{{device.name}}</h5>
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="{{device.id}}" [checked]="device.isOn" (change)="switchDevice(device, $event)">
+            <label class="custom-control-label" for="{{device.id}}"></label>
+          </div>
+        </div>
+        <div class="col-2 border text-center m-2 p-2">
+          <a data-toggle="modal" href="#addDeviceModal">
+            <br>
+            <div class="rounded-circle badge badge-light device-icon">
+              <i class="fa fa-plus-circle fa-4x"></i>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-add-device></app-add-device>

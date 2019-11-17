@@ -1,0 +1,46 @@
+<div class="d-flex h-75">
+  <div class="align-self-center">
+    <br>
+    <img src="../../../../assets/images/Logo.png" alt="SmartHome" class="rounded mx-auto d-block w-25">
+    <br>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <input placeholder="Username" type="text" class="form-control" formControlName="username" [ngClass]="{ 'is-invalid': submitted && f.username.errors }">
+        <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+          <div *ngIf="f.username.errors.required">Username is required</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <input placeholder="Email" type="text" class="form-control" formControlName="email" [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+        <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+          <div *ngIf="f.email.errors.required">Email is required</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <input placeholder="Password" type="password" class="form-control" formControlName="password" [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+          <div *ngIf="f.password.errors.required">Password is required</div>
+          <div *ngIf="f.password.errors.minlength">Password should be minimum 6 characters</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <input placeholder="Confirm password" type="password" class="form-control" formControlName="confirmPassword">
+        <div *ngIf="notMatch" class="invalid-feedback">
+          <div>Passwords don't match</div>
+        </div>
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-outline-primary btn-lg">
+          Register
+        </button>
+      </div>
+    </form>
+    <br>
+    <br>
+    <div class="text-center">
+      <a class="btn btn-link" (click)="login()" role="button">
+        Already have an account? Login.
+      </a>
+    </div>
+  </div>
+</div>

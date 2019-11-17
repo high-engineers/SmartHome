@@ -1,0 +1,28 @@
+<div class="modal" id="addDeviceModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add new device</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="">Type</label>
+          <select class="custom-select" [(ngModel)]="selectedDevice">
+            <option *ngFor="let device of unconnectedDevices" [ngValue]="device">{{device.type}}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="">Name</label>
+          <input type="text" class="form-control" [(ngModel)]="name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Dismiss</button>
+        <button type="button" class="btn btn-primary" (click)="addDevice()">Add device</button>
+      </div>
+    </div>
+  </div>
+</div>

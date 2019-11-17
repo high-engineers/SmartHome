@@ -1,0 +1,14 @@
+<div class="row">
+  <div class="col-9">
+    <img src="../../../../assets/images/WelcomeScreen.png" alt="SmartHome" class="img-fluid">
+  </div>
+  <div class="col-3">
+    <ng-container *ngIf="login; else register">
+      <app-login-form (onClick)="handleSwitch($event)"></app-login-form>
+    </ng-container>
+    <ng-template #register>
+      <app-register-form (onClick)="handleSwitch($event)"></app-register-form>
+    </ng-template>
+    
+  </div>
+</div>

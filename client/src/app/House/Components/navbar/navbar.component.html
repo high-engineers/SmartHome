@@ -1,0 +1,75 @@
+<div class="navbar-expand-lg navbar-light">
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false"
+    aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon text-dark"></span>
+  </button>
+
+  <div id="navbar" class="nav col-3 menu scrollbar collapse navbar-collapse" style="flex-direction: column;">
+    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+      <a *ngFor="let room of rooms" data-toggle="pill" href="rooms/{{room.id}}" role="tab" (click)="showDetails(room.id)">
+        <div class="card bg-light room">
+          <div [ngClass]="{'Bedroom': 'bedroom-img', 'Office': 'office-img', 'Guest room': 'guest-room-img',
+          'Living room': 'living-room-img', 'Kitchen': 'kitchen-img', 'Bathroom': 'bathroom-img'}[room.type]">
+            <div class="card-img-overlay text-white">
+              <div class="row align-items-center">
+                <div class="col-3 text-center">
+                  <div class="rounded-circle badge badge-primary d-flex align-items-center justify-content-center" style="min-width: 75px; min-height: 75px;">
+                    <i class="fa fa-4x" [ngClass]="{'Bedroom': 'fa-bed', 'Office': 'fa-laptop', 'Guest room': 'fa-address-book',
+                    'Living room': 'fa-home', 'Kitchen': 'fa-trash', 'Bathroom': 'fa-bath'}[room.type]"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h3>
+                    <b>
+                      {{ room.name }}
+                    </b>
+                  </h3>
+                </div>
+              </div>
+              <div class="row" style="padding: 20px 0px;">
+                <div *ngFor="let device of room.devices">
+                  <div [ngClass]="(device.isOn)?'badge-success':'badge-light'" class="col-2 rounded-circle badge d-flex align-items-center justify-content-center"
+                    style="min-width: 50px; min-height: 50px; margin: 5px;">
+                    <i class="fa fa-lightbulb-o fa-3x"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col text-center" *ngIf="room.temperature">
+                <h5 class="card-title">Temperature</h5>
+                <h3 class="card-text">{{ room.temperature }}°C</h3>
+              </div>
+              <div class="col text-center" *ngIf="room.humidity">
+                <h5 class="card-title">Humidity</h5>
+                <h3 class="card-text">{{ room.humidity }}%</h3>
+              </div>
+              <div class="col text-center" *ngIf="!room.temperature && !room.humidity">
+                <h4>
+                  Connect sensors to display data.
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <div class="card bg-light room">
+        <a data-toggle="modal" href="#addRoomModal">
+          <div class="rounded-circle align-items-center justify-content-center text-center" style="min-width: 75px; min-height: 75px;">
+            <br>
+            <i class="fa fa-plus-circle fa-4x"></i>
+            <br>
+            <br>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+<app-add-room></app-add-room>
