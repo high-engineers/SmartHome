@@ -28,18 +28,25 @@ namespace SmartHome.API.Rooms
         [HttpGet(Route)]
         public async Task<IActionResult> GetRooms([FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam)
         {
-            var result = await _getRoomsQueryHandler.HandleAsync(new GetRoomsQuery
+            try
             {
-                SmartHomeEntityId = queryParam.SmartHomeEntityId,
-                UserId = queryParam.RequestedByUserId
-            });
+                var result = await _getRoomsQueryHandler.HandleAsync(new GetRoomsQuery
+                {
+                    SmartHomeEntityId = queryParam.SmartHomeEntityId,
+                    UserId = queryParam.RequestedByUserId
+                });
 
-            if (!result.IsSuccess)
-            {
-                return result.ResultError.ToProperErrorResult();
+                if (!result.IsSuccess)
+                {
+                    return result.ResultError.ToProperErrorResult();
+                }
+
+                return new OkObjectResult(result.Data);
             }
-
-            return new OkObjectResult(result.Data);
+            catch(Exception e)
+            {
+                return new OkObjectResult(e.Message);
+            }
         }
 
 
