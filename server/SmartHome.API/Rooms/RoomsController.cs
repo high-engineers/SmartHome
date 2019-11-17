@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SmartHome.API.Infrastructure;
 using SmartHome.API.Infrastructure.Extensions;
+using SmartHome.API.Infrastructure.PostModels;
 using SmartHome.BusinessLogic.Components.CommandHandlers;
 using SmartHome.BusinessLogic.Components.Commands;
+using SmartHome.BusinessLogic.Rooms.CommandHandlers;
+using SmartHome.BusinessLogic.Rooms.Commands;
 using SmartHome.BusinessLogic.Rooms.Queries;
 using SmartHome.BusinessLogic.Rooms.QueryHandlers;
 using System;
@@ -17,12 +20,14 @@ namespace SmartHome.API.Rooms
         private readonly GetRoomsQueryHandler _getRoomsQueryHandler;
         private readonly GetRoomByIdQueryHandler _getRoomByIdQueryHandler;
         private readonly SwitchDeviceCommandHandler _switchDeviceCommandHandler;
+        private readonly AddRoomCommandHandler _addRoomCommandHandler;
 
-        public RoomsController(GetRoomsQueryHandler getRoomsQueryHandler, GetRoomByIdQueryHandler getRoomByIdQueryHandler, SwitchDeviceCommandHandler switchDeviceCommandHandler)
+        public RoomsController(GetRoomsQueryHandler getRoomsQueryHandler, GetRoomByIdQueryHandler getRoomByIdQueryHandler, SwitchDeviceCommandHandler switchDeviceCommandHandler, AddRoomCommandHandler addRoomCommandHandler)
         {
             _getRoomsQueryHandler = getRoomsQueryHandler;
             _getRoomByIdQueryHandler = getRoomByIdQueryHandler;
             _switchDeviceCommandHandler = switchDeviceCommandHandler;
+            _addRoomCommandHandler = addRoomCommandHandler;
         }
 
         [HttpGet(Route)]
@@ -43,12 +48,11 @@ namespace SmartHome.API.Rooms
 
                 return new OkObjectResult(result.Data);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return new OkObjectResult(e.Message);
             }
         }
-
 
         [HttpGet(Route + "/{roomId}")]
         public async Task<IActionResult> GetRoomById([FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam, [FromRoute] Guid roomId)
@@ -78,6 +82,25 @@ namespace SmartHome.API.Rooms
                 ComponentId = componentId,
                 NewState = newState,
                 RoomId = roomId
+            });
+
+            if (!result.IsSuccess)
+            {
+                return result.ResultError.ToProperErrorResult();
+            }
+
+            return new OkObjectResult(true);
+        }
+
+        [HttpPost(Route + "/add")]
+        public async Task<IActionResult> AddRoom([FromBody] AddRoom newRoom, [FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam)
+        {
+            var result = await _addRoomCommandHandler.HandleAsync(new AddRoomCommand
+            {
+                UserId = queryParam.RequestedByUserId,
+                SmartHomeEntityId = queryParam.SmartHomeEntityId,
+                Name = newRoom.Name,
+                Type = newRoom.Type
             });
 
             if (!result.IsSuccess)
