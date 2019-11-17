@@ -3,24 +3,22 @@ using Microsoft.EntityFrameworkCore;
 using SmartHome.BusinessLogic.Infrastructure.Models;
 using SmartHome.Data;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SmartHome.BusinessLogic.ValidationRules
 {
-    public class UserCanAddRoomValidationRule : IValidationRule<UserCanAddRoomValidationRuleData>
+    public class UserIsAdminValidationRule : IValidationRule<UserIsAdminValidationRuleData>
     {
-        private const string _userCannotAddRoomErrorMessage = "UserCannotAddRoomError";
+        private const string _userIsNotAdminErroMessage = "UserIsNotAdminError";
 
         private SmartHomeContext _context;
 
-        public UserCanAddRoomValidationRule(SmartHomeContext context)
+        public UserIsAdminValidationRule(SmartHomeContext context)
         {
             _context = context;
         }
 
-        public async Task<IResult<object>> ValidateAsync(UserCanAddRoomValidationRuleData data)
+        public async Task<IResult<object>> ValidateAsync(UserIsAdminValidationRuleData data)
         {
             var entity = await
                 _context
@@ -31,11 +29,11 @@ namespace SmartHome.BusinessLogic.ValidationRules
 
             return result
                 ? Result<object>.Success()
-                : Result<object>.Fail(new ResultError(StatusCodes.Status400BadRequest, _userCannotAddRoomErrorMessage));
+                : Result<object>.Fail(new ResultError(StatusCodes.Status400BadRequest, _userIsNotAdminErroMessage));
         }
 
     }
-    public class UserCanAddRoomValidationRuleData
+    public class UserIsAdminValidationRuleData
     {
         public Guid UserId { get; set; }
         public Guid SmartHomeEntityId { get; set; }

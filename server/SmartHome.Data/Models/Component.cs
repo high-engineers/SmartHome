@@ -13,7 +13,7 @@ namespace SmartHome.Data.Models
         public Guid ComponentTypeId { get; set; }
         public virtual ComponentType ComponentType { get; set; }
 
-        public Guid RoomId { get; set; }
+        public Guid? RoomId { get; set; }
         public virtual Room Room { get; set; }
 
         public virtual ICollection<ComponentData> ComponentData { get; set; }

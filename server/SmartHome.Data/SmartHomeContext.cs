@@ -67,8 +67,7 @@ namespace SmartHome.Data
             entity
                 .HasOne(x => x.Room)
                 .WithMany(x => x.Components)
-                .HasForeignKey(x => x.RoomId)
-                .IsRequired();
+                .HasForeignKey(x => x.RoomId);
         }
 
         private void OnComponentDataCreated(ModelBuilder modelBuilder)
