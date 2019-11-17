@@ -98,6 +98,7 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
             {
                 Id = room.RoomId,
                 Name = room.Name,
+                Type = room.Type,
                 Humidity = room.Components.GetCurrentHumidity(),
                 Temperature = room.Components.GetCurrentTemperature(),
                 Devices = room.Components
