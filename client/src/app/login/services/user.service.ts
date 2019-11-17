@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { NewUser } from '../models/new-user';
@@ -7,6 +6,7 @@ import { LoginData } from '../models/login-data';
 import { LoggedUser } from '../models/logged-user';
 import { SmartHome } from '../models/smart-home';
 import { SelectedSmartHome } from '../models/selected-smart-home';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

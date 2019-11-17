@@ -4,8 +4,8 @@ import { UnconecttedDevice } from '../Models/unconectted-device';
 import { Observable } from 'rxjs';
 import { Device } from '../Models/device';
 import { DeviceDetails } from '../Models/device-details';
-import { environment } from 'src/environments/environment';
 import { UserService } from '../../login/services/user.service';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
