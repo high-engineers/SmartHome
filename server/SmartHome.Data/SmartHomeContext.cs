@@ -142,6 +142,11 @@ namespace SmartHome.Data
                 .IsRequired();
 
             entity
+                .Property(x => x.Type)
+                .HasMaxLength(30)
+                .IsRequired();
+
+            entity
                 .HasOne(x => x.SmartHomeEntity)
                 .WithMany(x => x.Rooms)
                 .HasForeignKey(x => x.SmartHomeEntityId)

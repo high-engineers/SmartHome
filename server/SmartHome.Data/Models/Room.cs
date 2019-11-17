@@ -7,6 +7,7 @@ namespace SmartHome.Data.Models
     {
         public Guid RoomId { get; set; }
         public string Name { get; set; }
+        public string Type { get; set; }
 
         //FKs and nav props
         public Guid SmartHomeEntityId { get; set; }
