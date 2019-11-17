@@ -6,8 +6,8 @@ import { RoomDetails } from '../Models/room-details';
 import { Device } from '../Models/device';
 import { DeviceDetails } from '../Models/device-details';
 import { NewRoom } from '../Models/new-room';
-import { environment } from 'src/environments/environment';
 import { UserService } from '../../login/services/user.service';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
