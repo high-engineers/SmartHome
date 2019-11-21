@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SmartHome.BusinessLogic.Infrastructure.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SmartHome.BusinessLogic.ValidationRules

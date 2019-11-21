@@ -18,9 +18,9 @@ namespace SmartHome.BusinessLogic.Rooms.CommandHandlers
         private readonly UserExistsValidationRule _userExistsValidationRule;
         private readonly UserIsConnectedToSmartHomeEntityValidationRule _userIsConnectedToSmartHomeEntityValidationRule;
         private readonly AddRoomColumnValidationRule _addRoomColumnValidationRule;
-        private readonly UserCanAddRoomValidationRule _userCanAddRoomValidationRule;
+        private readonly UserIsAdminValidationRule _userCanAddRoomValidationRule;
 
-        public AddRoomCommandHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, UserExistsValidationRule userExistsValidationRule, UserIsConnectedToSmartHomeEntityValidationRule userIsConnectedToSmartHomeEntityValidationRule, AddRoomColumnValidationRule addRoomColumnValidationRule, UserCanAddRoomValidationRule userCanAddRoomValidationRule)
+        public AddRoomCommandHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, UserExistsValidationRule userExistsValidationRule, UserIsConnectedToSmartHomeEntityValidationRule userIsConnectedToSmartHomeEntityValidationRule, AddRoomColumnValidationRule addRoomColumnValidationRule, UserIsAdminValidationRule userCanAddRoomValidationRule)
         {
             _context = context;
             _smartHomeEntityExistsValidationRule = smartHomeEntityExistsValidationRule;
@@ -62,7 +62,7 @@ namespace SmartHome.BusinessLogic.Rooms.CommandHandlers
                 return resultUserIsConnectedToSmartHomeEntity;
             }
 
-            var resultUserCanAddRoom = await _userCanAddRoomValidationRule.ValidateAsync(new UserCanAddRoomValidationRuleData
+            var resultUserCanAddRoom = await _userCanAddRoomValidationRule.ValidateAsync(new UserIsAdminValidationRuleData
             {
                 UserId = command.UserId,
                 SmartHomeEntityId = command.SmartHomeEntityId

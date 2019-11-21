@@ -1,56 +1,49 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartHome.BusinessLogic.Components.Models;
+using SmartHome.BusinessLogic.Components.Queries;
 using SmartHome.BusinessLogic.Infrastructure.Extensions;
 using SmartHome.BusinessLogic.Infrastructure.Models;
-using SmartHome.BusinessLogic.Rooms.Models;
-using SmartHome.BusinessLogic.Rooms.Queries;
 using SmartHome.BusinessLogic.ValidationRules;
 using SmartHome.Data;
 using SmartHome.Data.Infrastructure.Enums;
 using SmartHome.Data.Models;
-using SmartHome.Data.Models.Extenstions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
+namespace SmartHome.BusinessLogic.Components.QueryHandlers
 {
-    public class GetRoomsQueryHandler
+    public class GetUnconnectedComponentsQueryHandler
     {
-        private readonly SmartHomeContext _context;
+        private SmartHomeContext _context;
         private readonly SmartHomeEntityExistsValidationRule _smartHomeEntityExistsValidationRule;
         private readonly UserExistsValidationRule _userExistsValidationRule;
         private readonly UserIsConnectedToSmartHomeEntityValidationRule _userIsConnectedToSmartHomeEntityValidationRule;
+        private readonly UserIsAdminValidationRule _userCanSeeUnconnectedComponents;
 
-        public GetRoomsQueryHandler(SmartHomeContext context,
-            SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule,
-            UserExistsValidationRule userExistsValidationRule,
-            UserIsConnectedToSmartHomeEntityValidationRule userIsConnectedToSmartHomeEntityValidationRule)
+        public GetUnconnectedComponentsQueryHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, UserExistsValidationRule userExistsValidationRule, UserIsConnectedToSmartHomeEntityValidationRule userIsConnectedToSmartHomeEntityValidationRule, UserIsAdminValidationRule userIsAdminValidationRule)
         {
             _context = context;
             _smartHomeEntityExistsValidationRule = smartHomeEntityExistsValidationRule;
             _userExistsValidationRule = userExistsValidationRule;
             _userIsConnectedToSmartHomeEntityValidationRule = userIsConnectedToSmartHomeEntityValidationRule;
+            _userCanSeeUnconnectedComponents = userIsAdminValidationRule;
         }
 
-        public async Task<IResult<IReadOnlyCollection<RoomBasicInfo>>> HandleAsync(GetRoomsQuery query)
+        public async Task<IResult<IReadOnlyCollection<ComponentBasicInfo>>> HandleAsync(GetUnconnectedComponentsQuery query)
         {
             var validationResult = await IsValidAsync(query);
 
             if (!validationResult.IsSuccess)
             {
-                return Result<IReadOnlyCollection<RoomBasicInfo>>.Fail(validationResult.ResultError);
+                return Result<IReadOnlyCollection<ComponentBasicInfo>>.Fail(validationResult.ResultError);
             }
 
-            var rooms = await GetRooms(query);
-
-            return (rooms
-                .Select(BuildRoom)
-                .ToList() as IReadOnlyCollection<RoomBasicInfo>)
-                .ToSuccessfulResult();
+            var components = await GetUnconnectedComponentsAsync(query);
+            return BuildBasicComponentsInfo(components).ToSuccessfulResult();
         }
 
-        private async Task<IResult<object>> IsValidAsync(GetRoomsQuery query)
+        private async Task<IResult<object>> IsValidAsync(GetUnconnectedComponentsQuery query)
         {
             var resultSmartHomeEntityExists = await _smartHomeEntityExistsValidationRule.ValidateAsync(query.SmartHomeEntityId);
 
@@ -78,37 +71,39 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
                 return resultUserIsConnectedToSmartHomeEntity;
             }
 
+            var resultUserCanSeeUnconnectedComponents = await _userCanSeeUnconnectedComponents.ValidateAsync(new UserIsAdminValidationRuleData
+            {
+                UserId = query.UserId,
+                SmartHomeEntityId = query.SmartHomeEntityId
+            });
+
+            if (!resultUserCanSeeUnconnectedComponents.IsSuccess)
+            {
+                return resultUserCanSeeUnconnectedComponents;
+            }
+
             return Result<object>.Success();
         }
 
-        private async Task<List<Room>> GetRooms(GetRoomsQuery query)
+        private async Task<IReadOnlyCollection<Component>> GetUnconnectedComponentsAsync(GetUnconnectedComponentsQuery query)
         {
-            return await _context.Rooms
-                .Where(x => x.SmartHomeEntityId == query.SmartHomeEntityId)
-                .Include(x => x.Components)
-                    .ThenInclude(x => x.ComponentType)
-                .Include(x => x.Components)
-                    .ThenInclude(x => x.ComponentData)
+            return await
+                _context
+                .Components
+                .Where(x => x.RoomId == null)
+                .Include(x => x.ComponentType)
                 .ToListAsync();
         }
 
-        private RoomBasicInfo BuildRoom(Room room)
+        private IReadOnlyCollection<ComponentBasicInfo> BuildBasicComponentsInfo(IReadOnlyCollection<Component> components)
         {
-            return new RoomBasicInfo
-            {
-                Id = room.RoomId,
-                Name = room.Name,
-                Humidity = room.Components.GetCurrentHumidity(),
-                Temperature = room.Components.GetCurrentTemperature(),
-                Devices = room.Components
-                    .Where(x => x.ComponentType.IsSwitchable)
-                    .Select(device => new Device
-                    {
-                        Id = device.ComponentId,
-                        IsOn = device.ComponentState == ComponentStateEnum.On,
-                        Type = device.ComponentType.Type.ToString()
-                    }).ToList()
-            };
+            return components
+                .Select(x => new ComponentBasicInfo
+                {
+                    Id = x.ComponentId,
+                    Type = x.ComponentType.Type.ToString()
+                })
+                .ToList();
         }
     }
 }
