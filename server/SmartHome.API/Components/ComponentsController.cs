@@ -16,11 +16,13 @@ namespace SmartHome.API.Components
 
         private readonly GetUnconnectedComponentsQueryHandler _getUnconnectedComponentsQueryHandler;
         private readonly AddComponentToRoomCommandHandler _addComponentToRoomCommandHandler;
+        private readonly GetAllComponentsQueryHandler _getAllComponentsQueryHandler;
 
-        public ComponentsController(GetUnconnectedComponentsQueryHandler getUnconnectedComponentsQueryHandler, AddComponentToRoomCommandHandler addComponentToRoomCommandHandler)
+        public ComponentsController(GetUnconnectedComponentsQueryHandler getUnconnectedComponentsQueryHandler, AddComponentToRoomCommandHandler addComponentToRoomCommandHandler, GetAllComponentsQueryHandler getAllComponentsQueryHandler)
         {
             _getUnconnectedComponentsQueryHandler = getUnconnectedComponentsQueryHandler;
             _addComponentToRoomCommandHandler = addComponentToRoomCommandHandler;
+            _getAllComponentsQueryHandler = getAllComponentsQueryHandler;
         }
 
         [HttpGet(Route + "/getUnconnected")]
@@ -58,6 +60,23 @@ namespace SmartHome.API.Components
             }
 
             return new OkObjectResult(true);
+        }
+
+        [HttpGet(Route)]
+        public async Task<IActionResult> GetAllComponents([FromQuery] Guid smartHomeEntityId, [FromQuery] Guid roomId)
+        {
+            var result = await _getAllComponentsQueryHandler.HandleAsync(new GetAllComponentsQuery
+            {
+                SmartHomeEntityId = smartHomeEntityId,
+                RoomId = roomId
+            });
+
+            if (!result.IsSuccess)
+            {
+                return result.ResultError.ToProperErrorResult();
+            }
+
+            return new OkObjectResult(result.Data);
         }
     }
 }
