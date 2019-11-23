@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SmartHome.API.Infrastructure;
 using SmartHome.API.Infrastructure.Extensions;
+using SmartHome.API.Infrastructure.PostModels;
 using SmartHome.BusinessLogic.Components.CommandHandlers;
 using SmartHome.BusinessLogic.Components.Commands;
 using SmartHome.BusinessLogic.Components.Queries;
@@ -17,12 +18,14 @@ namespace SmartHome.API.Components
         private readonly GetUnconnectedComponentsQueryHandler _getUnconnectedComponentsQueryHandler;
         private readonly AddComponentToRoomCommandHandler _addComponentToRoomCommandHandler;
         private readonly GetAllComponentsQueryHandler _getAllComponentsQueryHandler;
+        private readonly CollectSensorDataCommandHandler _collectSensorDataCommandHandler;
 
-        public ComponentsController(GetUnconnectedComponentsQueryHandler getUnconnectedComponentsQueryHandler, AddComponentToRoomCommandHandler addComponentToRoomCommandHandler, GetAllComponentsQueryHandler getAllComponentsQueryHandler)
+        public ComponentsController(GetUnconnectedComponentsQueryHandler getUnconnectedComponentsQueryHandler, AddComponentToRoomCommandHandler addComponentToRoomCommandHandler, GetAllComponentsQueryHandler getAllComponentsQueryHandler, CollectSensorDataCommandHandler collectSensorDataCommandHandler)
         {
             _getUnconnectedComponentsQueryHandler = getUnconnectedComponentsQueryHandler;
             _addComponentToRoomCommandHandler = addComponentToRoomCommandHandler;
             _getAllComponentsQueryHandler = getAllComponentsQueryHandler;
+            _collectSensorDataCommandHandler = collectSensorDataCommandHandler;
         }
 
         [HttpGet(Route + "/getUnconnected")]
@@ -63,12 +66,12 @@ namespace SmartHome.API.Components
         }
 
         [HttpGet(Route)]
-        public async Task<IActionResult> GetAllComponents([FromQuery] Guid smartHomeEntityId, [FromQuery] Guid roomId)
+        public async Task<IActionResult> GetAllComponents([FromQuery] SmartHomeEntityIdRoomIdQueryParam queryParam)
         {
             var result = await _getAllComponentsQueryHandler.HandleAsync(new GetAllComponentsQuery
             {
-                SmartHomeEntityId = smartHomeEntityId,
-                RoomId = roomId
+                SmartHomeEntityId = queryParam.SmartHomeEntityId,
+                RoomId = queryParam.RoomId 
             });
 
             if (!result.IsSuccess)
@@ -77,6 +80,27 @@ namespace SmartHome.API.Components
             }
 
             return new OkObjectResult(result.Data);
+        }
+
+        [HttpPost(Route + "/collect")]
+        public async Task<IActionResult> CollectSensorData([FromQuery] SmartHomeEntityIdRoomIdQueryParam smartHomeRoomQueryParam, [FromBody] CollectSensorDataModel data)
+        {
+            var now = DateTime.Now;
+            var result = await _collectSensorDataCommandHandler.HandleAsync(new CollectSensorDataCommand
+            {
+                ComponentId = data.SensorId,
+                Reading = data.Reading,
+                RoomId = smartHomeRoomQueryParam.RoomId,
+                SmartHomeEntityId = smartHomeRoomQueryParam.SmartHomeEntityId,
+                Timestamp = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0)
+            });
+
+            if (!result.IsSuccess)
+            {
+                return result.ResultError.ToProperErrorResult();
+            }
+
+            return new OkObjectResult(true);
         }
     }
 }

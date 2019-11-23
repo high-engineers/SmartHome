@@ -86,7 +86,7 @@ namespace SmartHome.API.Rooms
         }
 
         [HttpPost(Route + "/add")]
-        public async Task<IActionResult> AddRoom([FromBody] AddRoom newRoom, [FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam)
+        public async Task<IActionResult> AddRoom([FromBody] AddRoomModel newRoom, [FromQuery] UserIdSmartHomeEntityIdQueryParam queryParam)
         {
             var result = await _addRoomCommandHandler.HandleAsync(new AddRoomCommand
             {
