@@ -19,13 +19,15 @@ namespace SmartHome.API.Components
         private readonly AddComponentToRoomCommandHandler _addComponentToRoomCommandHandler;
         private readonly GetAllComponentsQueryHandler _getAllComponentsQueryHandler;
         private readonly CollectSensorDataCommandHandler _collectSensorDataCommandHandler;
+        private readonly RegisterComponentCommandHandler _registerComponentCommandHandler;
 
-        public ComponentsController(GetUnconnectedComponentsQueryHandler getUnconnectedComponentsQueryHandler, AddComponentToRoomCommandHandler addComponentToRoomCommandHandler, GetAllComponentsQueryHandler getAllComponentsQueryHandler, CollectSensorDataCommandHandler collectSensorDataCommandHandler)
+        public ComponentsController(GetUnconnectedComponentsQueryHandler getUnconnectedComponentsQueryHandler, AddComponentToRoomCommandHandler addComponentToRoomCommandHandler, GetAllComponentsQueryHandler getAllComponentsQueryHandler, CollectSensorDataCommandHandler collectSensorDataCommandHandler, RegisterComponentCommandHandler registerComponentCommandHandler)
         {
             _getUnconnectedComponentsQueryHandler = getUnconnectedComponentsQueryHandler;
             _addComponentToRoomCommandHandler = addComponentToRoomCommandHandler;
             _getAllComponentsQueryHandler = getAllComponentsQueryHandler;
             _collectSensorDataCommandHandler = collectSensorDataCommandHandler;
+            _registerComponentCommandHandler = registerComponentCommandHandler;
         }
 
         [HttpGet(Route + "/getUnconnected")]
@@ -93,6 +95,24 @@ namespace SmartHome.API.Components
                 RoomId = smartHomeRoomQueryParam.RoomId,
                 SmartHomeEntityId = smartHomeRoomQueryParam.SmartHomeEntityId,
                 Timestamp = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0)
+            });
+
+            if (!result.IsSuccess)
+            {
+                return result.ResultError.ToProperErrorResult();
+            }
+
+            return new OkObjectResult(true);
+        }
+
+        [HttpPost(Route + "/register")]
+        public async Task<IActionResult> RegisterComponent([FromQuery] SmartHomeEntityIdRoomIdQueryParam queryParam, [FromBody] RegisterComponentModel component)
+        {
+            var result = await _registerComponentCommandHandler.HandleAsync(new RegisterComponentCommand
+            {
+                RoomId = queryParam.RoomId,
+                SmartHomeEntityId = queryParam.SmartHomeEntityId,
+                Type = component.Type
             });
 
             if (!result.IsSuccess)

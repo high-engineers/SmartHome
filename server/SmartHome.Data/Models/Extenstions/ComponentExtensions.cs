@@ -12,14 +12,14 @@ namespace SmartHome.Data.Models.Extenstions
             return components.FirstOrDefault(x => x.ComponentType.Type == type);
         }
 
-        public static bool WhereTypeIn(this Component component, ICollection<ComponentTypeEnum> types)
+        public static bool IsTypeIn(this Component component, ICollection<ComponentTypeEnum> types)
         {
             return types.Contains(component.ComponentType.Type);
         }
 
         public static bool IsDevice(this Component component)
         {
-            return component.WhereTypeIn(new Collection<ComponentTypeEnum> { ComponentTypeEnum.LightBulb, ComponentTypeEnum.MotionSensor, ComponentTypeEnum.Switch });
+            return component.IsTypeIn(new Collection<ComponentTypeEnum> { ComponentTypeEnum.LightBulb, ComponentTypeEnum.MotionSensor, ComponentTypeEnum.Switch });
         }
 
         public static decimal? GetCurrentTemperature(this ICollection<Component> components)
