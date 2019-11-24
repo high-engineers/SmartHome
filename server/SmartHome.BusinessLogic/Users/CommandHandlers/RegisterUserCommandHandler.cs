@@ -13,14 +13,16 @@ namespace SmartHome.BusinessLogic.Users.CommandHandlers
     {
         private readonly SmartHomeContext _context;
 
+        private readonly RegisterUserColumnValidationRule _registerUserColumnValidationRule;
         private readonly UsernameDoesntExistValidationRule _usernameDoesntExistRule;
         private readonly EmailDoesntExistValidationRule _emailDoesntExistRule;
 
-        public RegisterUserCommandHandler(SmartHomeContext context, UsernameDoesntExistValidationRule usernameExistsValidationRule, EmailDoesntExistValidationRule emailExistsValidationRule)
+        public RegisterUserCommandHandler(SmartHomeContext context, RegisterUserColumnValidationRule registerUserColumnValidationRule, UsernameDoesntExistValidationRule usernameDoesntExistRule, EmailDoesntExistValidationRule emailDoesntExistRule)
         {
             _context = context;
-            _usernameDoesntExistRule = usernameExistsValidationRule;
-            _emailDoesntExistRule = emailExistsValidationRule;
+            _registerUserColumnValidationRule = registerUserColumnValidationRule;
+            _usernameDoesntExistRule = usernameDoesntExistRule;
+            _emailDoesntExistRule = emailDoesntExistRule;
         }
 
         public async Task<IResult<object>> HandleAsync(RegisterUserCommand command)
@@ -40,6 +42,18 @@ namespace SmartHome.BusinessLogic.Users.CommandHandlers
 
         private async Task<IResult<object>> IsValidAsync(RegisterUserCommand command)
         {
+            var resultColumnValidation = await _registerUserColumnValidationRule.ValidateAsync(new RegisterUserColumnValidationRuleData
+            {
+                Username = command.Username,
+                Email = command.Email,
+                Password = command.Password
+            });
+
+            if (!resultColumnValidation.IsSuccess)
+            {
+                return resultColumnValidation;
+            }
+
             var resultUsernameDoesntExist = await _usernameDoesntExistRule.ValidateAsync(command.Username);
 
             if (!resultUsernameDoesntExist.IsSuccess)
