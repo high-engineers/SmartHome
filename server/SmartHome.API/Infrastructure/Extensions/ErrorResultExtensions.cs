@@ -18,6 +18,8 @@ namespace SmartHome.API.Infrastructure.Extensions
                     return new ForbidResult();
                 case StatusCodes.Status404NotFound:
                     return new NotFoundObjectResult(resultError.ErrorMessage);
+                case StatusCodes.Status409Conflict:
+                    return new ConflictObjectResult(resultError.ErrorMessage);
                 default:
                     return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }

@@ -15,7 +15,7 @@ namespace SmartHome.API.Rooms
 {
     public class RoomsController
     {
-        public const string Route = "api/rooms";
+        private const string Route = "api/rooms";
 
         private readonly GetRoomsQueryHandler _getRoomsQueryHandler;
         private readonly GetRoomByIdQueryHandler _getRoomByIdQueryHandler;
