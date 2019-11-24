@@ -120,7 +120,7 @@ namespace SmartHome.API.Components
                 return result.ResultError.ToProperErrorResult();
             }
 
-            return new OkObjectResult(true);
+            return new OkObjectResult(result.Data);
         }
     }
 }

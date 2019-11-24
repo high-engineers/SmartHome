@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using SmartHome.BusinessLogic.Components.Commands;
+using SmartHome.BusinessLogic.Infrastructure.Extensions;
 using SmartHome.BusinessLogic.Infrastructure.Models;
 using SmartHome.BusinessLogic.ValidationRules;
 using SmartHome.Data;
@@ -28,19 +29,20 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
             _componentTypeExistsValidationRule = componentTypeExistsValidationRule;
         }
 
-        public async Task<IResult<object>> HandleAsync(RegisterComponentCommand command)
+        public async Task<IResult<Guid>> HandleAsync(RegisterComponentCommand command)
         {
             var validationResult = await IsValidAsync(command);
 
             if (!validationResult.IsSuccess)
             {
-                return Result<object>.Fail(validationResult.ResultError);
+                return Result<Guid>.Fail(validationResult.ResultError);
             }
 
-            var result = await RegisterComponentAsync(command);
-            return result
-                ? Result<object>.Success()
-                : Result<object>.Fail(new ResultError(StatusCodes.Status500InternalServerError, "Something went wrong..."));
+            var componentAdded = await RegisterComponentAsync(command);
+
+            return componentAdded != null
+                ? componentAdded.ComponentId.ToSuccessfulResult()
+                : Result<Guid>.Fail(new ResultError(StatusCodes.Status500InternalServerError, "Something went wrong..."));
         }
 
         private async Task<IResult<object>> IsValidAsync(RegisterComponentCommand command)
@@ -72,7 +74,7 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
             return Result<object>.Success();
         }
 
-        private async Task<bool> RegisterComponentAsync(RegisterComponentCommand command)
+        private async Task<Component> RegisterComponentAsync(RegisterComponentCommand command)
         {
             var typeEnum = Enum.Parse<ComponentTypeEnum>(command.Type);
 
@@ -93,11 +95,11 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
             {
                 await _context.Components.AddAsync(newComponent);
                 await _context.SaveChangesAsync();
-                return true;
+                return newComponent;
             }
             catch(Exception e)
             {
-                return false;
+                return null;
             }
         }
     }
