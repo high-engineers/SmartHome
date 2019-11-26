@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SmartHome.BusinessLogic.ValidationRules
 {
-    public class UserExistsValidationRule : IValidationRule<Guid>
+    public class UserExistsValidationRule : IValidationRule<Guid>, IValidationRule<string>
     {
         private const string UserDoesntExistErrorMessage = "UserDoesntExistError";
 
@@ -21,6 +21,15 @@ namespace SmartHome.BusinessLogic.ValidationRules
         public async Task<IResult<object>> ValidateAsync(Guid data)
         {
             var result = await _context.Users.AnyAsync(x => x.UserId == data);
+
+            return result
+                ? Result<object>.Success()
+                : Result<object>.Fail(new ResultError(StatusCodes.Status404NotFound, UserDoesntExistErrorMessage));
+        }
+
+        public async Task<IResult<object>> ValidateAsync(string email)
+        {
+            var result = await _context.Users.AnyAsync(x => x.Email == email);
 
             return result
                 ? Result<object>.Success()

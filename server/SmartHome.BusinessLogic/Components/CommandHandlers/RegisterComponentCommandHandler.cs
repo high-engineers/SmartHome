@@ -78,10 +78,12 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
                 //SmartHome does not exist. Need to create one.
                 if (smartHomeEntity == null)
                 {
+                    var now = DateTime.Now;
                     var newSmartHomeEntity = new SmartHomeEntity
                     {
                         IpAddress = command.IpAddress,
-                        RegisterTimestamp = DateTime.Now,
+                        RegisterTimestamp = now,
+                        Name = $"NewSmartHome{now.ToString()}"
                     };
 
                     await _context.SmartHomeEntities.AddAsync(newSmartHomeEntity);

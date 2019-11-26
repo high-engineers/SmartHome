@@ -170,6 +170,11 @@ namespace SmartHome.Data
                 .Property(x => x.IpAddress)
                 .HasMaxLength(15)
                 .IsRequired();
+
+            entity
+                .Property(x => x.Name)
+                .HasMaxLength(50)
+                .IsRequired();
         }
 
         private void OnUserCreated(ModelBuilder modelBuilder)
