@@ -15,7 +15,7 @@ namespace SmartHome.API.Infrastructure.Extensions
                 case StatusCodes.Status401Unauthorized:
                     return new UnauthorizedObjectResult(resultError.ErrorMessage);
                 case StatusCodes.Status403Forbidden:
-                    return new ForbidResult();
+                    return new BadRequestObjectResult(resultError.ErrorMessage);
                 case StatusCodes.Status404NotFound:
                     return new NotFoundObjectResult(resultError.ErrorMessage);
                 case StatusCodes.Status409Conflict:
