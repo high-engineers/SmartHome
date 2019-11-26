@@ -4,8 +4,7 @@ namespace SmartHome.BusinessLogic.Components.Commands
 {
     public class RegisterComponentCommand
     {
-        public Guid SmartHomeEntityId { get; set; }
-        public Guid RoomId { get; set; }
+        public string IpAddress { get; set; }
         public string Type { get; set; }
     }
 }

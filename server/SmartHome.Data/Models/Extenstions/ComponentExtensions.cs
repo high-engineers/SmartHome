@@ -19,7 +19,7 @@ namespace SmartHome.Data.Models.Extenstions
 
         public static bool IsDevice(this Component component)
         {
-            return component.IsTypeIn(new Collection<ComponentTypeEnum> { ComponentTypeEnum.LightBulb, ComponentTypeEnum.MotionSensor, ComponentTypeEnum.Switch });
+            return component.IsTypeIn(new Collection<ComponentTypeEnum> { ComponentTypeEnum.LightBulb, ComponentTypeEnum.MotionSensor });
         }
 
         public static decimal? GetCurrentTemperature(this ICollection<Component> components)
