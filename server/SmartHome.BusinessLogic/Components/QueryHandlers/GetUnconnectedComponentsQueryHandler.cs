@@ -90,7 +90,7 @@ namespace SmartHome.BusinessLogic.Components.QueryHandlers
             return await
                 _context
                 .Components
-                .Where(x => x.RoomId == null)
+                .Where(x => x.ComponentState == ComponentStateEnum.Registered)
                 .Include(x => x.ComponentType)
                 .ToListAsync();
         }

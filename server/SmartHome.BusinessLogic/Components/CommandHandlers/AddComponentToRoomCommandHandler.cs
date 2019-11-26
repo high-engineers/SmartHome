@@ -4,6 +4,7 @@ using SmartHome.BusinessLogic.Components.Commands;
 using SmartHome.BusinessLogic.Infrastructure.Models;
 using SmartHome.BusinessLogic.ValidationRules;
 using SmartHome.Data;
+using SmartHome.Data.Infrastructure.Enums;
 using SmartHome.Data.Models.Extenstions;
 using System;
 using System.Linq;
@@ -22,8 +23,9 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
         private readonly ComponentHasNoRoomAssignedValidationRule _componentHasNoRoomAssignedValidationRule;
         private readonly AddDeviceToRoomColumnValidationRule _addDeviceToRoomColumnValidationRule;
         private readonly DeviceExistsValidationRule _deviceExistsValidationRule;
+        private readonly RoomExistsValidationRule _roomExistsValidationRule;
 
-        public AddComponentToRoomCommandHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, UserExistsValidationRule userExistsValidationRule, UserIsConnectedToSmartHomeEntityValidationRule userIsConnectedToSmartHomeEntityValidationRule, UserIsAdminValidationRule userIsAdminValidationRule, ComponentExistsValidationRule componentExistsValidationRule, ComponentHasNoRoomAssignedValidationRule componentHasNoRoomAssignedValidationRule, AddDeviceToRoomColumnValidationRule addDeviceToRoomColumnValidationRule, DeviceExistsValidationRule deviceExistsValidationRule)
+        public AddComponentToRoomCommandHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, UserExistsValidationRule userExistsValidationRule, UserIsConnectedToSmartHomeEntityValidationRule userIsConnectedToSmartHomeEntityValidationRule, UserIsAdminValidationRule userIsAdminValidationRule, ComponentExistsValidationRule componentExistsValidationRule, ComponentHasNoRoomAssignedValidationRule componentHasNoRoomAssignedValidationRule, AddDeviceToRoomColumnValidationRule addDeviceToRoomColumnValidationRule, DeviceExistsValidationRule deviceExistsValidationRule, RoomExistsValidationRule roomExistsValidationRule)
         {
             _context = context;
             _smartHomeEntityExistsValidationRule = smartHomeEntityExistsValidationRule;
@@ -34,6 +36,7 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
             _componentHasNoRoomAssignedValidationRule = componentHasNoRoomAssignedValidationRule;
             _addDeviceToRoomColumnValidationRule = addDeviceToRoomColumnValidationRule;
             _deviceExistsValidationRule = deviceExistsValidationRule;
+            _roomExistsValidationRule = roomExistsValidationRule;
         }
 
         public async Task<IResult<object>> HandleAsync(AddComponentToRoomCommand command)
@@ -97,7 +100,15 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
                 return resultComponentExists;
             }
 
+            var resultRoomExists = await _roomExistsValidationRule.ValidateAsync(new RoomExistsValidationRuleData { RoomId = command.RoomId });
+
+            if (!resultRoomExists.IsSuccess)
+            {
+                return resultRoomExists;
+            }
+            
             var resultComponentHasNoRoomAssigned = await _componentHasNoRoomAssignedValidationRule.ValidateAsync(command.ComponentId);
+
             if (!resultComponentHasNoRoomAssigned.IsSuccess)
             {
                 return resultComponentHasNoRoomAssigned;
@@ -127,9 +138,17 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
             try
             {
                 component.RoomId = command.RoomId;
+
+                //if component is device we want it switched off by default
                 if (component.IsDevice())
                 {
                     component.Name = command.Name;
+                    component.ComponentState = ComponentStateEnum.Off;
+                }
+                //otherwise set to Collecting as sensor can't be switched on/off, it collects data despite of user's will 
+                else
+                {
+                    component.ComponentState = ComponentStateEnum.Collecting;
                 }
                 await _context.SaveChangesAsync();
                 return true;

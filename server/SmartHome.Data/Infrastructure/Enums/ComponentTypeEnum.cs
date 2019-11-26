@@ -6,7 +6,6 @@
         LightSensor,
         HumiditySensor,
         LightBulb,
-        Switch,
         MotionSensor
     }
 }
