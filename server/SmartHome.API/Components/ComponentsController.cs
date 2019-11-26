@@ -20,14 +20,16 @@ namespace SmartHome.API.Components
         private readonly GetAllComponentsQueryHandler _getAllComponentsQueryHandler;
         private readonly CollectSensorDataCommandHandler _collectSensorDataCommandHandler;
         private readonly RegisterComponentCommandHandler _registerComponentCommandHandler;
+        private readonly GetRoomIdByComponentIdQueryHandler _getRoomIdByComponentIdQueryHandler;
 
-        public ComponentsController(GetUnconnectedComponentsQueryHandler getUnconnectedComponentsQueryHandler, AddComponentToRoomCommandHandler addComponentToRoomCommandHandler, GetAllComponentsQueryHandler getAllComponentsQueryHandler, CollectSensorDataCommandHandler collectSensorDataCommandHandler, RegisterComponentCommandHandler registerComponentCommandHandler)
+        public ComponentsController(GetUnconnectedComponentsQueryHandler getUnconnectedComponentsQueryHandler, AddComponentToRoomCommandHandler addComponentToRoomCommandHandler, GetAllComponentsQueryHandler getAllComponentsQueryHandler, CollectSensorDataCommandHandler collectSensorDataCommandHandler, RegisterComponentCommandHandler registerComponentCommandHandler, GetRoomIdByComponentIdQueryHandler getRoomIdByComponentIdQueryHandler)
         {
             _getUnconnectedComponentsQueryHandler = getUnconnectedComponentsQueryHandler;
             _addComponentToRoomCommandHandler = addComponentToRoomCommandHandler;
             _getAllComponentsQueryHandler = getAllComponentsQueryHandler;
             _collectSensorDataCommandHandler = collectSensorDataCommandHandler;
             _registerComponentCommandHandler = registerComponentCommandHandler;
+            _getRoomIdByComponentIdQueryHandler = getRoomIdByComponentIdQueryHandler;
         }
 
         [HttpGet(Route + "/getUnconnected")]
@@ -106,13 +108,29 @@ namespace SmartHome.API.Components
         }
 
         [HttpPost(Route + "/register")]
-        public async Task<IActionResult> RegisterComponent([FromQuery] SmartHomeEntityIdRoomIdQueryParam queryParam, [FromBody] RegisterComponentModel component)
+        public async Task<IActionResult> RegisterComponent([FromQuery] string ipAddress, [FromBody] RegisterComponentModel component)
         {
             var result = await _registerComponentCommandHandler.HandleAsync(new RegisterComponentCommand
             {
-                RoomId = queryParam.RoomId,
-                SmartHomeEntityId = queryParam.SmartHomeEntityId,
+                IpAddress = ipAddress,
                 Type = component.Type
+            });
+
+            if (!result.IsSuccess)
+            {
+                return result.ResultError.ToProperErrorResult();
+            }
+
+            return new OkObjectResult(result.Data);
+        }
+
+        [HttpGet(Route + "/{componentId}/getRoom")]
+        public async Task<IActionResult> GetRoomId([FromRoute] Guid componentId, [FromQuery] Guid smartHomeEntityId)
+        {
+            var result = await _getRoomIdByComponentIdQueryHandler.HandleAsync(new GetRoomIdByComponentIdQuery
+            {
+                ComponentId = componentId,
+                SmartHomeEntityId = smartHomeEntityId
             });
 
             if (!result.IsSuccess)
