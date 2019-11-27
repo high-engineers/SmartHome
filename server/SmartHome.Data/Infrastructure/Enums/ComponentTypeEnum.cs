@@ -6,6 +6,7 @@
         LightSensor,
         HumiditySensor,
         LightBulb,
-        MotionSensor
+        MotionSensor,
+        Alarm
     }
 }
