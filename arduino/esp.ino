@@ -34,13 +34,13 @@ int alarm;
 bool motionBulb;
 String wifiIP;
 //ids
-String homeID;
-String lightBulbID;
-String motionID;
-String brightnessID;
-String humidityID;
-String temperatureID;
-String alarmID;
+String homeID = "ec2c6a09-3772-48aa-6c5b-08d7734b257c";
+String lightBulbID = "da251243-a1ce-4962-53a3-08d7734b258b";
+String motionID = "3e50ae3a-6e75-4b94-53a4-08d7734b258b";
+String brightnessID = "cc1b88b6-bcc6-44c5-53a5-08d7734b258b";
+String humidityID = "1f74b01d-4f0b-44a5-53a6-08d7734b258b";
+String temperatureID = "b8b17ae9-c982-467c-53a2-08d7734b258b";
+String alarmID = "c638f540-49a1-47d7-53a7-08d7734b258b";
 //rooms
 String lightBulbRoomID;
 String motionRoomID;
@@ -78,6 +78,8 @@ void getUniqueRoomsIDs(String rooms[]) {
       uniqueRoomsIDs[j] = rooms[i];
     }
   }
+  Serial.println(uniqueRoomsIDs[0]);
+  Serial.println(uniqueRoomsIDs[1]);
 }
 
 void  getMeasurements() {
@@ -112,13 +114,25 @@ void setup() {
   Serial.println("START");
   minBrightness = 60.0;
   WiFiManager wifiManager;
+  //wifiManager.resetSettings();
   Serial.println("Connecting ...");
   wifiManager.autoConnect("SmartHome");
   Serial.println("Connected!");
-  wifiIP = WiFi.localIP().toString();
+  getPublicIP();
   alarm = true;
   motionBulb = true;
   motion = LOW;
+}
+
+void getPublicIP(){
+  http.begin("http://api.ipify.org/");
+  int httpCode = http.GET();
+  if (httpCode != 200) {
+    Serial.println("Unable to get public IP");
+  } else {
+    wifiIP = http.getString();
+    Serial.println("Public IP: " + wifiIP);
+  }
 }
 
 void alarmActivation(){
@@ -150,17 +164,25 @@ void bulbActivation(){
 }
 
 void loop() {
-  delay(1000);
-  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
-  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
-  registerAllComponents();
-  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
-  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
+//  delay(5000);
+//  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
+//  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
+//  registerAllComponents();
+//  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
+//  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
+  delay(5000);
+  Serial.println("lightBulbRoomID: " + lightBulbRoomID + " * motionRoomID: " + motionRoomID + " brightnessRoomID: " + brightnessRoomID);
+  Serial.println("humidityRoomID: " + humidityRoomID + " * temperatureRoomID: " + temperatureRoomID + " * alarmRoomID: " + alarmRoomID);
+  getAllComponentsRoomsIDs();
+  Serial.println("lightBulbRoomID: " + lightBulbRoomID + " * motionRoomID: " + motionRoomID + " brightnessRoomID: " + brightnessRoomID);
+  Serial.println("humidityRoomID: " + humidityRoomID + " * temperatureRoomID: " + temperatureRoomID + " * alarmRoomID: " + alarmRoomID);
   delay(5000);
   Serial.println("lightBulbState: " + (String)lightBulbState + " * alarmState: " + alarmState);
   getComponentsStatesAllRooms();
   delay(1000);
   Serial.println("lightBulbState: " + (String)lightBulbState + " * alarmState: " + alarmState);
+  postComponentsReadingsAllRooms();
+  delay(5000);
   delay(10000);
  //getMeasurements();
  //alarmActivation();
@@ -185,11 +207,19 @@ void setUserVariables(String data){
 
 void getAllComponentsRoomsIDs(){
   motionRoomID = getComponentRoomIDbyID(getComponentRoomIDbyName("motion"));
+  allRoomsIDs[0] = motionRoomID;
   brightnessRoomID = getComponentRoomIDbyID(getComponentRoomIDbyName("brightness"));
+  allRoomsIDs[1] = brightnessRoomID;
   humidityRoomID = getComponentRoomIDbyID(getComponentRoomIDbyName("humidity"));
+  allRoomsIDs[2] = humidityRoomID;
   temperatureRoomID = getComponentRoomIDbyID(getComponentRoomIDbyName("temperature"));
+  allRoomsIDs[3] = temperatureRoomID;
   lightBulbRoomID = getComponentRoomIDbyID(getComponentRoomIDbyName("lightBulb"));
+  allRoomsIDs[4] = lightBulbRoomID;
   alarmRoomID = getComponentRoomIDbyID(getComponentRoomIDbyName("alarm"));
+  allRoomsIDs[5] = alarmRoomID;
+  Serial.println(allRoomsIDs[4]);
+  getUniqueRoomsIDs(allRoomsIDs);
 }
 
 String getComponentRoomIDbyName(String componentName){
@@ -213,7 +243,10 @@ String getComponentRoomIDbyName(String componentName){
 
 void getComponentsStatesAllRooms(){
   for (String uniqueRoom : uniqueRoomsIDs){
-    getComponentsStates(uniqueRoom);
+    if ( uniqueRoomsIDs ){
+      Serial.println("Getting states for room:" +  uniqueRoom);
+      getComponentsStates(uniqueRoom);
+    }
   }
 }
 
@@ -221,31 +254,38 @@ void postComponentsReadingsAllRooms(){
   getMeasurements();
   String data;
   for (String uniqueRoom : uniqueRoomsIDs){
-    measurement.clear();
-    measurement["SensorId"] = motionID;
-    measurement["Reading"] = motion;
-    serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoom, data);
-    measurement.clear();
-    measurement["SensorId"] = brightnessID;
-    measurement["Reading"] = brightness;
-    serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoom, data);
-    measurement.clear();
-    measurement["SensorId"] = humidityID;
-    measurement["Reading"] = humidity;
-    serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoom, data);
-    measurement.clear();
-    measurement["SensorId"] = temperatureID;
-    measurement["Reading"] = temperature;
-    serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoom, data);
-    measurement.clear();
-    measurement["SensorId"] = lightBulbID;
-    measurement["Reading"] = lightBulbState;
-    serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoom, data);
+    if ( uniqueRoomsIDs ){
+      measurement.clear();
+      measurement["SensorId"] = motionID;
+      measurement["Reading"] = motion;
+      serializeJsonPretty(measurement, data);
+      postComponentReadings(uniqueRoom, data);
+      measurement.clear();
+      data = "";
+      measurement["SensorId"] = brightnessID;
+      measurement["Reading"] = brightness;
+      serializeJsonPretty(measurement, data);
+      Serial.println("AUUUUU " + data);
+      postComponentReadings(uniqueRoom, data);
+      measurement.clear();
+      data = "";
+      measurement["SensorId"] = humidityID;
+      measurement["Reading"] = humidity;
+      serializeJsonPretty(measurement, data);
+      postComponentReadings(uniqueRoom, data);
+      measurement.clear();
+      data = "";
+      measurement["SensorId"] = temperatureID;
+      measurement["Reading"] = temperature;
+      serializeJsonPretty(measurement, data);
+      postComponentReadings(uniqueRoom, data);
+      measurement.clear();
+      data = "";
+      measurement["SensorId"] = lightBulbID;
+      measurement["Reading"] = lightBulbState;
+      serializeJsonPretty(measurement, data);
+      postComponentReadings(uniqueRoom, data);
+    }
   }
 }
 
@@ -253,6 +293,7 @@ void postComponentReadings(String roomID, String data){
   Serial.print("[HTTP] begin...\n");
   if (http.begin(client, "http://smarthomehighengineers.azurewebsites.net/api/components/collect?smartHomeEntityId=" + homeID + "&roomId=" + roomID)){
     http.addHeader("Content-Type", "application/json");
+    Serial.println(data);
     int httpCode = http.POST(data);
 
     if (httpCode > 0) {
@@ -299,9 +340,9 @@ void writeStates(){
   }
 }
 
-void getComponentsStates(String roomID){
+void getComponentsStates(String myRoomID){
   Serial.print("[HTTP] begin...\n");
-  if (http.begin(client, "http://smarthomehighengineers.azurewebsites.net/api/components?smartHomeEntityId=" + homeID + "&roomId=" + roomID)) {
+  if (http.begin(client, "http://smarthomehighengineers.azurewebsites.net/api/components?smartHomeEntityId=" + homeID + "&roomId=" + myRoomID)) {
 
 
     Serial.print("[HTTP] GET...\n");
@@ -316,6 +357,7 @@ void getComponentsStates(String roomID){
       // file found at server
       if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
         String payload = http.getString();
+        Serial.println(payload);
         DynamicJsonDocument data(1024);
         deserializeJson(data, payload);
         JsonArray root = data.to<JsonArray>();
@@ -326,6 +368,8 @@ void getComponentsStates(String roomID){
           i++;
         }
         writeStates();
+      } else {
+        Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
       }
     } else {
       Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
@@ -339,6 +383,7 @@ void getComponentsStates(String roomID){
 String getComponentRoomIDbyID(String componentID){
   String returnValue = "";
   Serial.print("[HTTP] begin...\n");
+  Serial.println("Getting component room ID... componentID: " + componentID + " homeID: " + homeID);
   if (http.begin(client, "http://smarthomehighengineers.azurewebsites.net/api/components/" + componentID +"/getRoom?smartHomeEntityId="+ homeID)) {
 
 
@@ -354,9 +399,13 @@ String getComponentRoomIDbyID(String componentID){
       // file found at server
       if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
         String payload = http.getString();
+        Serial.println("Payload: " + payload);
         StaticJsonDocument<200> data;
         deserializeJson(data, payload);
+        
         returnValue = data["roomId"].as<String>();
+      } else {
+        Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
       }
     } else {
       Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
@@ -380,6 +429,8 @@ String getComponentType(String componentName){
     return "HumiditySensor";
   } else if(componentName == "temperatureID") {
     return "Thermometer";
+  } else if(componentName == "alarmID") {
+    return "Alarm";
   } else {
     return "";
   }
@@ -390,7 +441,13 @@ void registerComponent(String componentName){
   if (http.begin(client, "http://smarthomehighengineers.azurewebsites.net/api/components/register?ipAddress=" + wifiIP)){
     http.addHeader("Content-Type", "application/json");
     String componentType = getComponentType(componentName);
-    int httpCode = http.POST(componentType);
+    String postdata;
+    StaticJsonDocument<200> json;
+    json["Type"] = componentType;
+    serializeJsonPretty(json, postdata);
+    Serial.print(postdata);
+    Serial.println();
+    int httpCode = http.POST(postdata);
 
     if (httpCode > 0) {
       // HTTP header has been send and Server response header has been handled
@@ -418,6 +475,8 @@ void registerComponent(String componentName){
         homeID = data["smartHomeEntityId"].as<String>();
         Serial.println(payload);
         Serial.printf("Success getting homeID");
+      } else {
+        Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
       }
     } else {
       Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
