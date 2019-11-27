@@ -53,7 +53,7 @@ String uniqueRoomsIDs[2];
 
 struct ComponentState{
   String Id;
-  bool State = false;
+  String State;
 };
 
 ComponentState componentsState[2];
@@ -114,14 +114,6 @@ void setup() {
   WiFiManager wifiManager;
   Serial.println("Connecting ...");
   wifiManager.autoConnect("SmartHome");
-  /*WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP(wifiSSID, wifiPassword);
-  Serial.println("sada");
-  while(!(WiFiMulti.run() == WL_CONNECTED)){
-    Serial.println("Connecting to wifi...");
-    WiFiMulti.addAP(wifiSSID, wifiPassword);
-    delay(1000);
-  }*/
   Serial.println("Connected!");
   wifiIP = WiFi.localIP().toString();
   alarm = true;
@@ -158,77 +150,27 @@ void bulbActivation(){
 }
 
 void loop() {
- getMeasurements();
- alarmActivation();
- bulbActivation();
+  delay(1000);
+  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
+  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
+  registerAllComponents();
+  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
+  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
+  delay(5000);
+  Serial.println("lightBulbState: " + (String)lightBulbState + " * alarmState: " + alarmState);
+  getComponentsStatesAllRooms();
+  delay(1000);
+  Serial.println("lightBulbState: " + (String)lightBulbState + " * alarmState: " + alarmState);
+  delay(10000);
+ //getMeasurements();
+ //alarmActivation();
+ //bulbActivation();
  //getInfoFromServer();
 //  if (millis() - postTime > postDelay){
 //    postTime += postDelay;
 //    postDataToServer();
 //  }
-  checkMotion();
-}
-
-
-
-void getInfoFromServer(){
-  dataFromServer.clear();
-   
-  Serial.print("[HTTP] begin...\n");
-  if (http.begin(client, "http://my-json-server.typicode.com/WMilosz/test/user")) {
-
-
-    Serial.print("[HTTP] GET...\n");
-    // start connection and send HTTP header
-    int httpCode = http.GET();
-
-    // httpCode will be negative on error
-    if (httpCode > 0) {
-      // HTTP header has been send and Server response header has been handled
-      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-
-      // file found at server
-      if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
-        String payload = http.getString();
-        Serial.println(payload);
-        setUserVariables(payload);
-      }
-    } else {
-      Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-    }
-
-    http.end();
-  } else {
-    Serial.printf("[HTTP} Unable to connect\n");
-  }
-}
-
-void postDataToServer(){
-  getMeasurements();
-  Serial.print("[HTTP] begin...\n");
-  if (http.begin(client, "http://my-json-server.typicode.com/Wmilosz/test/user")){
-    http.addHeader("Content-Type", "application/json");
-    String temp;
-    serializeJsonPretty(dataToServer, temp);
-    int httpCode = http.POST(temp);
-
-    if (httpCode > 0) {
-      // HTTP header has been send and Server response header has been handled
-      Serial.printf("[HTTP] POST... code: %d\n", httpCode);
-
-      if (httpCode == 201 || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
-        String payload = http.getString();
-        Serial.println(payload);
-        Serial.println("SUCESS!");
-      }
-    } else {
-      Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
-    }
-    http.end();
-  } else {
-    Serial.printf("[HTTP} Unable to connect\n");
-  }
-  
+  //checkMotion();
 }
 
 void setUserVariables(String data){
@@ -270,40 +212,40 @@ String getComponentRoomIDbyName(String componentName){
 }
 
 void getComponentsStatesAllRooms(){
-  for (int i =0; i < 2; i++){
-    getComponentsStates(uniqueRoomsIDs[i]);
+  for (String uniqueRoom : uniqueRoomsIDs){
+    getComponentsStates(uniqueRoom);
   }
 }
 
 void postComponentsReadingsAllRooms(){
   getMeasurements();
   String data;
-  for (int i =0; i < 2; i++){
+  for (String uniqueRoom : uniqueRoomsIDs){
     measurement.clear();
     measurement["SensorId"] = motionID;
     measurement["Reading"] = motion;
     serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoomsIDs[i], data);
+    postComponentReadings(uniqueRoom, data);
     measurement.clear();
     measurement["SensorId"] = brightnessID;
     measurement["Reading"] = brightness;
     serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoomsIDs[i], data);
+    postComponentReadings(uniqueRoom, data);
     measurement.clear();
     measurement["SensorId"] = humidityID;
     measurement["Reading"] = humidity;
     serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoomsIDs[i], data);
+    postComponentReadings(uniqueRoom, data);
     measurement.clear();
     measurement["SensorId"] = temperatureID;
     measurement["Reading"] = temperature;
     serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoomsIDs[i], data);
+    postComponentReadings(uniqueRoom, data);
     measurement.clear();
     measurement["SensorId"] = lightBulbID;
     measurement["Reading"] = lightBulbState;
     serializeJsonPretty(measurement, data);
-    postComponentReadings(uniqueRoomsIDs[i], data);
+    postComponentReadings(uniqueRoom, data);
   }
 }
 
@@ -320,7 +262,7 @@ void postComponentReadings(String roomID, String data){
       if (httpCode == 200 || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
         String payload = http.getString();
         Serial.println(payload);
-        Serial.println("SUCESS!");
+        Serial.println("SUCCESS!");
       }
     } else {
       Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
@@ -333,11 +275,27 @@ void postComponentReadings(String roomID, String data){
 
 void writeStates(){
   if(componentsState[0].Id == lightBulbID){
-    lightBulbState = componentsState[0].State;
-    alarmState = componentsState[1].State;
+    if ( componentsState[0].State == "On" ) {
+      lightBulbState = HIGH;
+    } else if ( componentsState[0].State == "Off" ) {
+      lightBulbState = LOW;
+    }
+    if ( componentsState[1].State == "On" ) {
+      alarmState = HIGH;
+    } else if ( componentsState[1].State == "Off" ) {
+      alarmState = LOW;
+    }
   } else {
-    lightBulbState = componentsState[1].State;
-    alarmState = componentsState[0].State;
+    if ( componentsState[1].State == "On" ) {
+      lightBulbState = HIGH;
+    } else if ( componentsState[1].State == "Off" ) {
+      lightBulbState = LOW;
+    }
+    if ( componentsState[0].State == "On" ) {
+      alarmState = HIGH;
+    } else if ( componentsState[0].State == "Off" ) {
+      alarmState = LOW;
+    }
   }
 }
 
@@ -367,7 +325,6 @@ void getComponentsStates(String roomID){
           componentsState[i].State = item["State"].as<String>();
           i++;
         }
-        //componentsState = data["ComponentArduinoInfo"];
         writeStates();
       }
     } else {
@@ -439,7 +396,7 @@ void registerComponent(String componentName){
       // HTTP header has been send and Server response header has been handled
       Serial.printf("[HTTP] POST... code: %d\n", httpCode);
 
-      if (httpCode == 201 || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+      if (httpCode == 200 || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
         String payload = http.getString();
         StaticJsonDocument<200> data;
         deserializeJson(data, payload);
@@ -454,6 +411,8 @@ void registerComponent(String componentName){
           humidityID = data["componentId"].as<String>();
         } else if(componentName == "temperatureID") {
           temperatureID = data["componentId"].as<String>();
+        } else if(componentName == "alarmID") {
+          alarmID = data["componentId"].as<String>();
         } else {
         }
         homeID = data["smartHomeEntityId"].as<String>();
@@ -475,7 +434,7 @@ void registerAllComponents(){
   registerComponent("brightnessID");
   registerComponent("humidityID");
   registerComponent("temperatureID");
-  registerComponent("switchID");
+  registerComponent("alarmID");
 }
 
 void checkMotion(){
