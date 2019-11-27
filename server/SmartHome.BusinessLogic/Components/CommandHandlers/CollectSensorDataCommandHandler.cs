@@ -16,13 +16,15 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
         private readonly SmartHomeEntityExistsValidationRule _smartHomeEntityExistsValidationRule;
         private readonly RoomExistsValidationRule _roomExistsValidationRule;
         private readonly ComponentExistsValidationRule _componentExistsValidationRule;
+        private readonly ComponentShouldCollectDataValidationRule _componentShouldCollectDataValidationRule;
 
-        public CollectSensorDataCommandHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, RoomExistsValidationRule roomExistsValidationRule, ComponentExistsValidationRule componentExistsValidationRule)
+        public CollectSensorDataCommandHandler(SmartHomeContext context, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, RoomExistsValidationRule roomExistsValidationRule, ComponentExistsValidationRule componentExistsValidationRule, ComponentShouldCollectDataValidationRule componentShouldCollectDataValidationRule)
         {
             _context = context;
             _smartHomeEntityExistsValidationRule = smartHomeEntityExistsValidationRule;
             _roomExistsValidationRule = roomExistsValidationRule;
             _componentExistsValidationRule = componentExistsValidationRule;
+            _componentShouldCollectDataValidationRule = componentShouldCollectDataValidationRule;
         }
 
         public async Task<IResult<object>> HandleAsync(CollectSensorDataCommand command)
@@ -64,6 +66,13 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
             if (!resultComponentExists.IsSuccess)
             {
                 return resultComponentExists;
+            }
+
+            var resultShouldCollectData = await _componentShouldCollectDataValidationRule.ValidateAsync(command.ComponentId);
+
+            if (!resultShouldCollectData.IsSuccess)
+            {
+                return resultShouldCollectData;
             }
 
             return Result<object>.Success();
