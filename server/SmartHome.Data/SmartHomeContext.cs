@@ -68,6 +68,12 @@ namespace SmartHome.Data
                 .HasOne(x => x.Room)
                 .WithMany(x => x.Components)
                 .HasForeignKey(x => x.RoomId);
+
+            entity
+                .HasOne(x => x.SmartHomeEntity)
+                .WithMany(x => x.Components)
+                .HasForeignKey(x => x.SmartHomeEntityId)
+                .IsRequired();
         }
 
         private void OnComponentDataCreated(ModelBuilder modelBuilder)
@@ -84,10 +90,6 @@ namespace SmartHome.Data
                .Property(x => x.Reading)
                .HasColumnType("decimal(6, 2)")
                .IsRequired();
-
-            entity
-                .Property(x => x.Message)
-                .HasMaxLength(30);
 
             entity
                 .Property(x => x.Timestamp)
@@ -164,11 +166,6 @@ namespace SmartHome.Data
 
             entity
                 .Property(x => x.RegisterTimestamp)
-                .IsRequired();
-
-            entity
-                .Property(x => x.IpAddress)
-                .HasMaxLength(15)
                 .IsRequired();
 
             entity

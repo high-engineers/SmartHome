@@ -17,5 +17,8 @@ namespace SmartHome.Data.Models
         public virtual Room Room { get; set; }
 
         public virtual ICollection<ComponentData> ComponentData { get; set; }
+
+        public Guid SmartHomeEntityId { get; set; }
+        public virtual SmartHomeEntity SmartHomeEntity { get; set; }
     }
 }

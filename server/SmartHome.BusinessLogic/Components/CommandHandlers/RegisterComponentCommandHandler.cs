@@ -19,11 +19,13 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
         private readonly SmartHomeContext _context;
 
         private readonly ComponentTypeExistsValidationRule _componentTypeExistsValidationRule;
+        private readonly SmartHomeEntityExistsValidationRule _smartHomeEntityExistsValidationRule;
 
-        public RegisterComponentCommandHandler(SmartHomeContext context, ComponentTypeExistsValidationRule componentTypeExistsValidationRule)
+        public RegisterComponentCommandHandler(SmartHomeContext context, ComponentTypeExistsValidationRule componentTypeExistsValidationRule, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule)
         {
             _context = context;
             _componentTypeExistsValidationRule = componentTypeExistsValidationRule;
+            _smartHomeEntityExistsValidationRule = smartHomeEntityExistsValidationRule;
         }
 
         public async Task<IResult<SmartHomeComponent>> HandleAsync(RegisterComponentCommand command)
@@ -44,6 +46,13 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
 
         private async Task<IResult<object>> IsValidAsync(RegisterComponentCommand command)
         {
+            var resultSmartHomeEntityExists = await _smartHomeEntityExistsValidationRule.ValidateAsync(command.SmartHomeEntityId);
+
+            if (!resultSmartHomeEntityExists.IsSuccess)
+            {
+                return resultSmartHomeEntityExists;
+            }
+
             var resultComponentTypeExists = await _componentTypeExistsValidationRule.ValidateAsync(command.Type);
 
             if (!resultComponentTypeExists.IsSuccess)
@@ -67,42 +76,20 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
             var newComponent = new Component
             {
                 ComponentState = ComponentStateEnum.Registered,
-                ComponentTypeId = componentType.ComponentTypeId
+                ComponentTypeId = componentType.ComponentTypeId,
+                SmartHomeEntityId = command.SmartHomeEntityId
             };
 
             try
             {
-                var smartHomeEntity = await _context.SmartHomeEntities.FirstOrDefaultAsync(x => x.IpAddress == command.IpAddress);
-                Guid smartHomeEntityId;
-
-                //SmartHome does not exist. Need to create one.
-                if (smartHomeEntity == null)
-                {
-                    var now = DateTime.Now;
-                    var newSmartHomeEntity = new SmartHomeEntity
-                    {
-                        IpAddress = command.IpAddress,
-                        RegisterTimestamp = now,
-                        Name = $"NewSmartHome{now.ToString()}"
-                    };
-
-                    await _context.SmartHomeEntities.AddAsync(newSmartHomeEntity);
-                    smartHomeEntityId = newSmartHomeEntity.SmartHomeEntityId;
-                }
-                else
-                {
-                    smartHomeEntityId = smartHomeEntity.SmartHomeEntityId;
-                }
-
                 await _context.Components.AddAsync(newComponent);
                 await _context.SaveChangesAsync();
                 return new SmartHomeComponent
                 {
-                    ComponentId = newComponent.ComponentId,
-                    SmartHomeEntityId = smartHomeEntityId
+                    ComponentId = newComponent.ComponentId
                 };
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }

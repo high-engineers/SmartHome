@@ -108,11 +108,11 @@ namespace SmartHome.API.Components
         }
 
         [HttpPost(Route + "/register")]
-        public async Task<IActionResult> RegisterComponent([FromQuery] string ipAddress, [FromBody] RegisterComponentModel component)
+        public async Task<IActionResult> RegisterComponent([FromQuery] Guid smartHomeEntityId, [FromBody] RegisterComponentModel component)
         {
             var result = await _registerComponentCommandHandler.HandleAsync(new RegisterComponentCommand
             {
-                IpAddress = ipAddress,
+                SmartHomeEntityId = smartHomeEntityId,
                 Type = component.Type
             });
 
