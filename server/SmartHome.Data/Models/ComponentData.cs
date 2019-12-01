@@ -6,7 +6,6 @@ namespace SmartHome.Data.Models
     {
         public Guid ComponentDataId { get; set; }
         public decimal Reading { get; set; }
-        public string Message { get; set; }
         public DateTime Timestamp { get; set; }
 
         //FKs and nav props

@@ -5,7 +5,6 @@
         On,
         Off,
         Collecting,
-        Registered,
-        Unknown
+        Registered
     };
 }
