@@ -11,7 +11,7 @@ namespace SmartHome.BusinessLogic.Components.CommandHandlers
 {
     public class CollectSensorDataCommandHandler
     {
-        private SmartHomeContext _context;
+        private readonly SmartHomeContext _context;
 
         private readonly SmartHomeEntityExistsValidationRule _smartHomeEntityExistsValidationRule;
         private readonly RoomExistsValidationRule _roomExistsValidationRule;
