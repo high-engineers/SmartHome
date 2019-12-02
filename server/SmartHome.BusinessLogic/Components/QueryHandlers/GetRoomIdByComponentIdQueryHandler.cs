@@ -5,9 +5,7 @@ using SmartHome.BusinessLogic.Infrastructure.Models;
 using SmartHome.BusinessLogic.ValidationRules;
 using SmartHome.Data;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SmartHome.BusinessLogic.Components.QueryHandlers
@@ -17,12 +15,14 @@ namespace SmartHome.BusinessLogic.Components.QueryHandlers
         private readonly SmartHomeContext _context;
         private readonly ComponentExistsValidationRule _componentExistsValidationRule;
         private readonly SmartHomeEntityExistsValidationRule _smartHomeEntityExistsValidationRule;
+        private readonly ComponentHasRoomAssignedValidationRule _componentHasRoomAssignedValidationRule;
 
-        public GetRoomIdByComponentIdQueryHandler(SmartHomeContext context, ComponentExistsValidationRule componentExistsValidationRule, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule)
+        public GetRoomIdByComponentIdQueryHandler(SmartHomeContext context, ComponentExistsValidationRule componentExistsValidationRule, SmartHomeEntityExistsValidationRule smartHomeEntityExistsValidationRule, ComponentHasRoomAssignedValidationRule componentHasRoomAssignedValidationRule)
         {
             _context = context;
             _componentExistsValidationRule = componentExistsValidationRule;
             _smartHomeEntityExistsValidationRule = smartHomeEntityExistsValidationRule;
+            _componentHasRoomAssignedValidationRule = componentHasRoomAssignedValidationRule;
         }
 
         public async Task<IResult<ComponentRoomId>> HandleAsync(GetRoomIdByComponentIdQuery query)
@@ -56,6 +56,14 @@ namespace SmartHome.BusinessLogic.Components.QueryHandlers
             {
                 return resultComponentExists;
             }
+
+            var resultComponentHasRoomAssigned = await _componentHasRoomAssignedValidationRule.ValidateAsync(query.ComponentId);
+
+            if (!resultComponentHasRoomAssigned.IsSuccess)
+            {
+                return resultComponentHasRoomAssigned;
+            }
+
             return Result<object>.Success();
         }
 

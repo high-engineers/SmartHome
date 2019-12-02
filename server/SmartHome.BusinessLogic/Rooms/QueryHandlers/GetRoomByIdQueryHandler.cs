@@ -8,6 +8,7 @@ using SmartHome.BusinessLogic.ValidationRules;
 using SmartHome.Data;
 using SmartHome.Data.Infrastructure.Enums;
 using SmartHome.Data.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -118,12 +119,14 @@ namespace SmartHome.BusinessLogic.Rooms.QueryHandlers
                     .Select(x => new SensorHistory
                     {
                         Type = x.ComponentType.Type.ToString(),
-                        HistoryEntries = x.ComponentData.Select(y => new SensorHistoryEntry
-                        {
-                            Id = y.ComponentDataId,
-                            Time = y.Timestamp,
-                            Value = y.Reading
-                        }).ToList()
+                        HistoryEntries = x.ComponentData
+                            .Where(q => q.Timestamp.Date == DateTime.Now.Date)
+                            .Select(y => new SensorHistoryEntry
+                            {
+                                Id = y.ComponentDataId,
+                                Time = y.Timestamp,
+                                Value = y.Reading
+                            }).ToList()
                     }).ToList()
             };
         }
