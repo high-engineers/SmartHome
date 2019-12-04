@@ -26,7 +26,7 @@ namespace SmartHome.BusinessLogic.ValidationRules
 
             return result
                 ? Result<object>.Success()
-                : Result<object>.Fail(new ResultError(StatusCodes.Status400BadRequest, _componentDoesntExistErrorMessage));
+                : Result<object>.Fail(new ResultError(StatusCodes.Status404NotFound, _componentDoesntExistErrorMessage));
         }
     }
 }
