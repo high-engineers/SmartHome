@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using SmartHome.BusinessLogic.Infrastructure.Extensions;
 using SmartHome.BusinessLogic.Infrastructure.Models;
 using SmartHome.BusinessLogic.Users.Commands;
 using SmartHome.BusinessLogic.ValidationRules;
@@ -33,7 +34,7 @@ namespace SmartHome.BusinessLogic.Users.CommandHandlers
             {
                 return Result<object>.Fail(validationResult.ResultError);
             }
-
+            
             var result = await AddUserAsync(command);
             return result
                 ? Result<object>.Success()
@@ -77,7 +78,7 @@ namespace SmartHome.BusinessLogic.Users.CommandHandlers
             {
                 Username = command.Username,
                 Email = command.Email,
-                Password = command.Password
+                Password = command.Password.GetHashedString()
             };
 
             try
@@ -86,7 +87,7 @@ namespace SmartHome.BusinessLogic.Users.CommandHandlers
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return false;
             }

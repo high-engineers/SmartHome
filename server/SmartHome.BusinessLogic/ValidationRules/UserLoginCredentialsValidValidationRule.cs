@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SmartHome.BusinessLogic.Infrastructure.Extensions;
 using SmartHome.BusinessLogic.Infrastructure.Models;
 using SmartHome.Data;
 using System.Threading.Tasks;
@@ -19,7 +20,15 @@ namespace SmartHome.BusinessLogic.ValidationRules
 
         public async Task<IResult<object>> ValidateAsync(UserLoginCredentialsValidationRuleData credentials)
         {
-            var result = await _context.Users.AnyAsync(x => x.Username == credentials.Username && x.Password == credentials.Password);
+            var result = true;
+            if (credentials.Password == null)
+            {
+                result = false;
+            }
+            else
+            {
+                result = await _context.Users.AnyAsync(x => x.Username == credentials.Username && x.Password == credentials.Password.GetHashedString());
+            }
 
             return result
                 ? Result<object>.Success()
