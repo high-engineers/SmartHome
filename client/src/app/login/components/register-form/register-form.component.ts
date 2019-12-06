@@ -6,8 +6,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-form',
-  templateUrl: './register-form.component.html',
-  styleUrls: ['./register-form.component.scss']
+  templateUrl: './register-form.component.html'
 })
 export class RegisterFormComponent implements OnInit {
 

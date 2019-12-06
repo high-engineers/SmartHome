@@ -8,8 +8,7 @@ import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 
 @Component({
   selector: 'app-add-device',
-  templateUrl: './add-device.component.html',
-  styleUrls: ['./add-device.component.scss']
+  templateUrl: './add-device.component.html'
 })
 export class AddDeviceComponent implements OnInit {
 
