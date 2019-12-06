@@ -6,7 +6,7 @@ import { LoginData } from '../models/login-data';
 import { LoggedUser } from '../models/logged-user';
 import { SmartHome } from '../models/smart-home';
 import { SelectedSmartHome } from '../models/selected-smart-home';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
