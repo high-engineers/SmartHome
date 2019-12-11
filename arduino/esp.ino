@@ -8,7 +8,6 @@
 #include <WiFiClient.h>
 #include <WiFiManager.h>
 #include <EEPROM.h>
-#include "EEPROMAnything.h"
 
 #define MOTION_IN 12  //d6
 #define DHT11PIN 13   //d7
@@ -18,6 +17,9 @@
 
 dht11 DHT11;
 int bvalue;
+bool initMeasurements = true;
+long timer = 0;
+long measurementPeriod = 5400000;
 float brightness;
 float humidity;
 float temperature;
@@ -35,12 +37,20 @@ bool motionBulb;
 String wifiIP;
 //ids
 String homeID = "ec2c6a09-3772-48aa-6c5b-08d7734b257c";
-String lightBulbID = "da251243-a1ce-4962-53a3-08d7734b258b";
-String motionID = "3e50ae3a-6e75-4b94-53a4-08d7734b258b";
-String brightnessID = "cc1b88b6-bcc6-44c5-53a5-08d7734b258b";
-String humidityID = "1f74b01d-4f0b-44a5-53a6-08d7734b258b";
-String temperatureID = "b8b17ae9-c982-467c-53a2-08d7734b258b";
-String alarmID = "c638f540-49a1-47d7-53a7-08d7734b258b";
+String lightBulbID = "5522a0df-18c4-4a12-05ce-08d77dca541c";
+String motionID = "0f30fdcd-3baa-442b-05cf-08d77dca541c";
+String brightnessID = "dc074abc-482c-4d40-05d0-08d77dca541c";
+String humidityID = "8aba1083-4ce0-4a8d-05d1-08d77dca541c";
+String temperatureID = "bbf5b0a0-7b84-4a60-05d2-08d77dca541c";
+String alarmID = "ee46359b-5150-4ee5-05d3-08d77dca541c";
+//ids locations
+int homeIDlocation = 0;
+int lightBulbIDlocation = homeIDlocation + sizeof(homeID);
+int motionIDlocation = lightBulbIDlocation + sizeof(lightBulbID);
+int brightnessIDlocation = motionIDlocation + sizeof(motionID);
+int humidityIDlocation = brightnessIDlocation + sizeof(brightnessID);
+int temperatureIDlocation = humidityIDlocation + sizeof(humidityID);
+int alarmIDlocation = temperatureIDlocation + sizeof(temperatureID);
 //rooms
 String lightBulbRoomID;
 String motionRoomID;
@@ -56,7 +66,7 @@ struct ComponentState{
   String State;
 };
 
-ComponentState componentsState[2];
+ComponentState componentsState[20];
 
 StaticJsonDocument<200> dataToServer;
 StaticJsonDocument<200> dataFromServer;
@@ -112,16 +122,24 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
   Serial.println("START");
-  minBrightness = 60.0;
+  minBrightness = 0.0;
   WiFiManager wifiManager;
   //wifiManager.resetSettings();
   Serial.println("Connecting ...");
   wifiManager.autoConnect("SmartHome");
   Serial.println("Connected!");
-  getPublicIP();
-  alarm = true;
-  motionBulb = true;
+//  getPublicIP();
+//  alarm = true;
+  alarmState = 1;
+  motionBulb = false;
   motion = LOW;
+//  doIhaveAllIDs();
+//  printallIDs();
+}
+
+void printallIDs(){
+  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
+  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
 }
 
 void getPublicIP(){
@@ -133,6 +151,26 @@ void getPublicIP(){
     wifiIP = http.getString();
     Serial.println("Public IP: " + wifiIP);
   }
+}
+
+//void writeGUID(String guid, int addrToWrite){
+//  EEPROM.put(addrToWrite, homeID);
+//  Serial.println("homeID saved");
+//  addrToWrite = addrToWrite + sizeof(homeID);
+//  EEPROM.put(addrToWrite, lightBulbID);
+//  Serial.println("lightBulbID saved");
+//  homeID = "";
+//  lightBulbID = "";
+//  EEPROM.get(addrToWrite, homeID);
+//}
+
+bool checkIfGUID(String guid) {
+  for(int i = 8; i < 24 ; i+=5){
+    if ( guid.charAt(i) != '-') {
+      return false;
+    }
+  }
+  return true;
 }
 
 void alarmActivation(){
@@ -150,49 +188,71 @@ void alarmActivation(){
 }
 
 void bulbActivation(){
-  if (minBrightness > brightness || (motion == HIGH && motionBulb == true)) {
-    digitalWrite(RELAY_OUT, HIGH);
-    lightBulbState = 1;
-    Serial.println("ZAPALAM ŚWIATŁO");
-    delay(50);
-  } else {
-    digitalWrite(RELAY_OUT, LOW);
-    lightBulbState = 0;
-    Serial.println("GASZĘ ŚWIATŁO");
-    delay(50);
-  }
+//  if (minBrightness > brightness || (motion == HIGH && motionBulb == true)) {
+//    digitalWrite(RELAY_OUT, HIGH);
+//    lightBulbState = 1;
+//    Serial.println("ZAPALAM ŚWIATŁO");
+//    delay(50);
+//  } else {
+ //     digitalWrite(RELAY_OUT, LOW);
+  //    Serial.println("GASZĘ ŚWIATŁO");
+  //    delay(50);
+   // }
+   digitalWrite(RELAY_OUT, lightBulbState);
 }
 
+void checkMotion();
+void doIhaveAllIDs();
+void registerAllComponents();
+void registerComponent(String componentName);
+String getComponentType(String componentName);
+String getComponentRoomIDbyID(String componentID);
+void getComponentsStates(String myRoomID);
+void writeStates(ComponentState componentsState[]);
+void postComponentReadings(String roomID, String data);
+void postComponentsReadingsAllRooms();
+void postReadingsWhenTime();
+void getComponentsStatesAllRooms();
+String getComponentRoomIDbyName(String componentName);
+void getAllComponentsRoomsIDs();
+void setUserVariables(String data);
+
 void loop() {
+////  delay(5000);
+////  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
+////  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
+////  registerAllComponents();
+////  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
+////  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
 //  delay(5000);
-//  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
-//  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
-//  registerAllComponents();
-//  Serial.println("homeID: " + homeID + " * lightBulbID: " + lightBulbID + " * motionID: " + motionID + " brightnessID: " + brightnessID);
-//  Serial.println("humidityID: " + humidityID + " * temperatureID: " + temperatureID + " * alarmID: " + alarmID);
-  delay(5000);
-  Serial.println("lightBulbRoomID: " + lightBulbRoomID + " * motionRoomID: " + motionRoomID + " brightnessRoomID: " + brightnessRoomID);
-  Serial.println("humidityRoomID: " + humidityRoomID + " * temperatureRoomID: " + temperatureRoomID + " * alarmRoomID: " + alarmRoomID);
-  getAllComponentsRoomsIDs();
-  Serial.println("lightBulbRoomID: " + lightBulbRoomID + " * motionRoomID: " + motionRoomID + " brightnessRoomID: " + brightnessRoomID);
-  Serial.println("humidityRoomID: " + humidityRoomID + " * temperatureRoomID: " + temperatureRoomID + " * alarmRoomID: " + alarmRoomID);
-  delay(5000);
-  Serial.println("lightBulbState: " + (String)lightBulbState + " * alarmState: " + alarmState);
-  getComponentsStatesAllRooms();
+//  Serial.println("lightBulbRoomID: " + lightBulbRoomID + " * motionRoomID: " + motionRoomID + " brightnessRoomID: " + brightnessRoomID);
+//  Serial.println("humidityRoomID: " + humidityRoomID + " * temperatureRoomID: " + temperatureRoomID + " * alarmRoomID: " + alarmRoomID);
+//  getAllComponentsRoomsIDs();
+//  Serial.println("lightBulbRoomID: " + lightBulbRoomID + " * motionRoomID: " + motionRoomID + " brightnessRoomID: " + brightnessRoomID);
+//  Serial.println("humidityRoomID: " + humidityRoomID + " * temperatureRoomID: " + temperatureRoomID + " * alarmRoomID: " + alarmRoomID);
+//  delay(5000);
+//  Serial.println("lightBulbState: " + (String)lightBulbState + " * alarmState: " + alarmState);
+//  getComponentsStatesAllRooms();
+//  delay(1000);
+//  Serial.println("lightBulbState: " + (String)lightBulbState + " * alarmState: " + alarmState);
+//  postComponentsReadingsAllRooms();
+//  delay(5000);
+//  delay(10000);
   delay(1000);
-  Serial.println("lightBulbState: " + (String)lightBulbState + " * alarmState: " + alarmState);
-  postComponentsReadingsAllRooms();
-  delay(5000);
-  delay(10000);
- //getMeasurements();
- //alarmActivation();
- //bulbActivation();
- //getInfoFromServer();
-//  if (millis() - postTime > postDelay){
-//    postTime += postDelay;
-//    postDataToServer();
-//  }
-  //checkMotion();
+  doIhaveAllIDs();
+  delay(1000);
+  getAllComponentsRoomsIDs();
+  getComponentsStatesAllRooms();
+  alarmActivation();
+  bulbActivation();
+  postReadingsWhenTime();
+// //getInfoFromServer();
+////  if (millis() - postTime > postDelay){
+////    postTime += postDelay;
+////    postDataToServer();
+////  }
+  checkMotion();
+  delay(1000);
 }
 
 void setUserVariables(String data){
@@ -246,6 +306,19 @@ void getComponentsStatesAllRooms(){
     if ( uniqueRoomsIDs ){
       Serial.println("Getting states for room:" +  uniqueRoom);
       getComponentsStates(uniqueRoom);
+    }
+  }
+}
+
+void postReadingsWhenTime(){
+  if ( initMeasurements == true) {
+    timer = millis();
+    postComponentsReadingsAllRooms();
+    initMeasurements = false;
+  } else {
+    if (millis() - timer >= measurementPeriod) {
+      timer = millis();
+      postComponentsReadingsAllRooms();
     }
   }
 }
@@ -314,28 +387,28 @@ void postComponentReadings(String roomID, String data){
   }
 }
 
-void writeStates(){
-  if(componentsState[0].Id == lightBulbID){
-    if ( componentsState[0].State == "On" ) {
-      lightBulbState = HIGH;
-    } else if ( componentsState[0].State == "Off" ) {
-      lightBulbState = LOW;
+void writeStates(ComponentState componentsState[]){
+
+  for (int i=0; i < 20; i++){
+    Serial.println("LB_ID = " + lightBulbID);
+    Serial.println("COMP_ID = " + componentsState[i].Id);
+    if(componentsState[i].Id == lightBulbID){
+      if ( componentsState[i].State == "On" ) {
+        lightBulbState = HIGH;
+        Serial.println("LIGHT STATE HIGH!");
+      } else if ( componentsState[i].State == "Off" ) {
+        lightBulbState = LOW;
+        Serial.println("LIGHT STATE LOW!");
+      }
     }
-    if ( componentsState[1].State == "On" ) {
-      alarmState = HIGH;
-    } else if ( componentsState[1].State == "Off" ) {
-      alarmState = LOW;
-    }
-  } else {
-    if ( componentsState[1].State == "On" ) {
-      lightBulbState = HIGH;
-    } else if ( componentsState[1].State == "Off" ) {
-      lightBulbState = LOW;
-    }
-    if ( componentsState[0].State == "On" ) {
-      alarmState = HIGH;
-    } else if ( componentsState[0].State == "Off" ) {
-      alarmState = LOW;
+    if(componentsState[i].Id == alarmID){
+      if ( componentsState[i].State == "On" ) {
+        alarmState = HIGH;
+        Serial.println("ALARM STATE HIGH!");
+      } else if ( componentsState[i].State == "Off" ) {
+        alarmState = LOW;
+        Serial.println("ALARM STATE LOW!");
+      }
     }
   }
 }
@@ -360,14 +433,15 @@ void getComponentsStates(String myRoomID){
         Serial.println(payload);
         DynamicJsonDocument data(1024);
         deserializeJson(data, payload);
-        JsonArray root = data.to<JsonArray>();
+        JsonArray root = data.as<JsonArray>();
         int i = 0;
-        for (JsonObject item : root) {
-          componentsState[i].Id = item["Id"].as<String>();
-          componentsState[i].State = item["State"].as<String>();
+        for (JsonVariant item : root) {
+          componentsState[i].Id = item["id"].as<String>();
+          Serial.println("R: ID: " + componentsState[i].Id);
+          componentsState[i].State = item["state"].as<String>();
           i++;
         }
-        writeStates();
+        writeStates(componentsState);
       } else {
         Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
       }
@@ -438,7 +512,7 @@ String getComponentType(String componentName){
 
 void registerComponent(String componentName){
   Serial.print("[HTTP] begin...\n");
-  if (http.begin(client, "http://smarthomehighengineers.azurewebsites.net/api/components/register?ipAddress=" + wifiIP)){
+  if (http.begin(client, "http://smarthomehighengineers.azurewebsites.net/api/components/register?smartHomeEntityId=" + homeID)){
     http.addHeader("Content-Type", "application/json");
     String componentType = getComponentType(componentName);
     String postdata;
@@ -472,7 +546,7 @@ void registerComponent(String componentName){
           alarmID = data["componentId"].as<String>();
         } else {
         }
-        homeID = data["smartHomeEntityId"].as<String>();
+        //homeID = data["smartHomeEntityId"].as<String>();
         Serial.println(payload);
         Serial.printf("Success getting homeID");
       } else {
@@ -494,6 +568,70 @@ void registerAllComponents(){
   registerComponent("humidityID");
   registerComponent("temperatureID");
   registerComponent("alarmID");
+}
+
+void doIhaveAllIDs(){
+  //EEPROM.get(homeIDlocation, pom);
+  Serial.println(homeID);
+  if (!checkIfGUID(homeID)){
+    Serial.println(checkIfGUID(homeID));
+   // EEPROM.put(homeIDlocation, homeID);
+  }
+  Serial.println("home at " + String(homeIDlocation));
+  
+  //EEPROM.get(lightBulbIDlocation, pom);
+  Serial.println(lightBulbID);
+  if (!checkIfGUID(lightBulbID)){
+    Serial.println(checkIfGUID(lightBulbID));
+    registerComponent("lightBulbID");
+  //  EEPROM.put(lightBulbIDlocation, lightBulbID); 
+  }
+    Serial.println("light at " + String(lightBulbIDlocation));
+  
+ // EEPROM.get(motionIDlocation, pom);
+  Serial.println(motionID);
+  if (!checkIfGUID(motionID)){
+    Serial.println(checkIfGUID(motionID)); 
+    registerComponent("motionID");
+ //   EEPROM.put(motionIDlocation, motionID); 
+  }
+    Serial.println("motion at " + String(motionIDlocation));
+  
+//  EEPROM.get(brightnessIDlocation, pom);
+  Serial.println(brightnessID);
+  if (!checkIfGUID(brightnessID)){
+    Serial.println(checkIfGUID(brightnessID));
+    registerComponent("brightnessID");
+   // EEPROM.put(brightnessIDlocation, brightnessID); 
+  }
+    Serial.println("brightness at " + String(brightnessIDlocation));
+    
+ // EEPROM.get(humidityIDlocation, pom);
+  Serial.println(humidityID);
+  if (!checkIfGUID(humidityID)){
+    Serial.println(checkIfGUID(humidityID));
+    registerComponent("humidityID");
+   // EEPROM.put(humidityIDlocation, humidityID); 
+  }
+    Serial.println("humidity at " + String(humidityIDlocation));
+  
+  //EEPROM.get(temperatureIDlocation, pom);
+  Serial.println(temperatureID);
+  if (!checkIfGUID(temperatureID)){
+    Serial.println(checkIfGUID(temperatureID));
+    registerComponent("temperatureID");
+ //   EEPROM.put(temperatureIDlocation, temperatureID); 
+  }
+    Serial.println("temperature at " + String(temperatureIDlocation));
+  
+  //EEPROM.get(alarmIDlocation, pom);
+  Serial.println(alarmID);
+  if (!checkIfGUID(alarmID)){
+    Serial.println(checkIfGUID(alarmID));
+    registerComponent("alarmID");
+ //   EEPROM.put(alarmIDlocation, alarmID);
+  }
+    Serial.println("alarm at " + String(alarmIDlocation));
 }
 
 void checkMotion(){
